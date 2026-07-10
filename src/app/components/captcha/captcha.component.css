@@ -1,0 +1,129 @@
+.recaptcha-widget {
+  width: 100%;
+  max-width: 320px;
+  height: 74px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  box-sizing: border-box;
+  font-family: Roboto, Arial, sans-serif;
+  user-select: none;
+}
+
+.recaptcha-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+}
+
+.recaptcha-checkbox {
+  width: 28px;
+  height: 28px;
+  border: 2px solid #c1c1c1;
+  background: #ffffff;
+  border-radius: 2px;
+  position: relative;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkbox-container:hover .recaptcha-checkbox:not(.verified):not(.verifying) {
+  border-color: #a9a9a9;
+}
+
+.recaptcha-checkbox.verifying {
+  border: none;
+}
+
+.recaptcha-checkbox.verified {
+  border: none;
+  background: transparent;
+}
+
+/* Spinner Ring */
+.spinner-ring {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #1e88e5;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Checkmark SVG */
+.checkmark-svg {
+  width: 32px;
+  height: 32px;
+  fill: #009688; /* Green checkmark */
+  animation: check-scale 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes check-scale {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.recaptcha-label {
+  font-size: 14px;
+  color: #2c2c2c;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.recaptcha-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+}
+
+.loop-arrows-logo {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: #1e88e5;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.recaptcha-brand {
+  font-size: 9px;
+  font-weight: 700;
+  color: #555555;
+  margin-top: 3px;
+  letter-spacing: 0.5px;
+}
+
+.recaptcha-links {
+  font-size: 8px;
+  color: #9b9b9b;
+  margin-top: 1px;
+}

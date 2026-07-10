@@ -1,0 +1,151 @@
+<div class="landing-viewport">
+  <!-- Brand Navbar -->
+  <header class="landing-header">
+    <div class="container header-container">
+      <div class="logo-section">
+        <img src="/ccf_white_logo.png" alt="Central Capital Finance Logo" class="brand-logo" />
+      </div>
+      <div class="nav-links">
+        <a class="nav-link" href="#" (click)="$event.preventDefault()">About Us</a>
+        <a class="nav-link" href="#" (click)="$event.preventDefault()">Support</a>
+        <a class="nav-link" [routerLink]="['/dashboard']" style="color: #0A58CA; font-weight: 700; text-decoration: none; margin-right: 1rem;">Customer Portal Login</a>
+        <span class="portal-badge">Self-Service Onboarding</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero & Action Cards -->
+  <main class="landing-main">
+    <div class="container hero-layout">
+      <div class="hero-text">
+        <h1 class="hero-title">Welcome to the Future of <span>Digital Banking</span></h1>
+        <p class="hero-description">
+          Open a premium personal account in minutes with our fully self-service onboarding portal. Secure, fast, and entirely paperless.
+        </p>
+      </div>
+
+      <div class="cards-grid">
+        <!-- Card 1: Start Onboarding -->
+        <div class="action-card" (click)="startNewApplication()">
+          <div class="card-info-side">
+            <h3 class="card-title">New Customer?</h3>
+            <p class="card-desc">Start a fresh personal onboarding file</p>
+          </div>
+          <button class="card-btn">
+            Apply Now
+            <svg class="btn-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+
+        <!-- Card 2: Open Dashboard -->
+        <div class="action-card" [routerLink]="['/dashboard']">
+          <div class="card-info-side">
+            <h3 class="card-title">Open Dashboard</h3>
+            <p class="card-desc">Access your premium customer banking portal</p>
+          </div>
+          <button class="card-btn">
+            Open Dashboard
+            <svg class="btn-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Portal Footer -->
+  <footer class="landing-footer">
+    <div class="container">
+      <p>&copy; 2026 Central Capital Finance. All rights reserved. Registered and licensed financial service institution.</p>
+    </div>
+  </footer>
+
+  <!-- Resume Application Modal -->
+  <div class="modal-overlay" *ngIf="showResumeModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Resume Saved Application</h3>
+        <button class="btn-close" (click)="closeResumeDialog()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="demo-helper-box">
+          <p>💡 <strong>Demo Mode:</strong> You can use our preloaded demo application reference to see a loaded stepper state.</p>
+          <a class="demo-btn-link" (click)="quickLoadDemo()">Quick Load Demo: CCF-DEMO123</a>
+        </div>
+
+        <div class="form-group" [class.has-error]="resumeError">
+          <label class="form-label" for="resumeRefInput">Application Reference Number</label>
+          <div class="input-wrapper">
+            <input 
+              id="resumeRefInput"
+              type="text" 
+              placeholder="e.g. CCF-A1B2C3D4" 
+              [(ngModel)]="resumeRefNumber"
+              (keyup.enter)="handleResumeSearch()"
+            />
+          </div>
+          <span class="form-error" *ngIf="resumeError">{{ resumeError }}</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeResumeDialog()">Cancel</button>
+        <button class="btn btn-primary" (click)="handleResumeSearch()">Resume</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Check Status Modal -->
+  <div class="modal-overlay" *ngIf="showStatusModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Track Application Status</h3>
+        <button class="btn-close" (click)="closeStatusDialog()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group" [class.has-error]="statusError">
+          <label class="form-label" for="statusRefInput">Application Reference Number</label>
+          <div class="input-wrapper">
+            <input 
+              id="statusRefInput"
+              type="text" 
+              placeholder="e.g. CCF-DEMO123" 
+              [(ngModel)]="statusRefNumber"
+              (keyup.enter)="handleStatusSearch()"
+            />
+          </div>
+          <span class="form-error" *ngIf="statusError">{{ statusError }}</span>
+        </div>
+
+        <!-- Status Details -->
+        <div class="status-card" *ngIf="statusResult">
+          <h4 style="margin-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">Application Details</h4>
+          <div class="status-row">
+            <span class="status-label">Reference:</span>
+            <span class="status-val">{{ statusResult.referenceNumber }}</span>
+          </div>
+          <div class="status-row">
+            <span class="status-label">Applicant:</span>
+            <span class="status-val">{{ statusResult.personalDetails?.firstName }} {{ statusResult.personalDetails?.lastName }}</span>
+          </div>
+          <div class="status-row">
+            <span class="status-label">Last Updated:</span>
+            <span class="status-val">{{ statusResult.updatedAt | date:'medium' }}</span>
+          </div>
+          <div class="status-row">
+            <span class="status-label">Status:</span>
+            <span class="status-badge" [ngClass]="statusResult.status.toLowerCase()">
+              {{ statusResult.status }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeStatusDialog()">Close</button>
+        <button class="btn btn-primary" (click)="handleStatusSearch()">Search</button>
+      </div>
+    </div>
+  </div>
+</div>

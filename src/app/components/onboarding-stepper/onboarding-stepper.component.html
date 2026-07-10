@@ -1,0 +1,1400 @@
+<!-- Global Toast Notifications -->
+<div class="toast-container" *ngIf="showToast">
+  <div class="toast-message" [ngClass]="toastType">
+    <span>
+      <span *ngIf="toastType === 'success'">✔️</span>
+      <span *ngIf="toastType === 'danger'">❌</span>
+      <span *ngIf="toastType === 'warning'">⚠️</span>
+      <span *ngIf="toastType === 'info'">ℹ️</span>
+      {{ toastMessage }}
+    </span>
+    <button class="toast-close" (click)="closeToast()">&times;</button>
+  </div>
+</div>
+
+<!-- Simulated SMS OTP Notification Bubble -->
+<div class="otp-notification-bubble" *ngIf="showOtpNotification">
+  <div class="otp-bubble-header">Message from CCF-SECURE</div>
+  <div class="otp-bubble-body">
+    CCF Security: Your verification OTP is:
+    <span class="otp-bubble-code">{{ mockOtp }}</span>
+    Do not share this code. Valid for 10 minutes.
+  </div>
+</div>
+
+<div class="terms-modal-overlay" *ngIf="showTermsModal">
+  <div class="terms-modal-card glass-panel" style="max-width: 750px; width: 90%;">
+    <div class="terms-conditions-container" (scroll)="onTermsScroll($event)" style="max-height: 400px; overflow-y: auto; padding: 20px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-surface); line-height: 1.6; font-size: 13.5px; color: var(--text-muted);">
+      <h2 style="color: var(--text-main); margin-bottom: 16px; font-size: 18px; font-weight: 700;">Central Capital Finance (CCF) - Self-Service Account Opening Terms & Conditions</h2>
+      
+      <p style="margin-bottom: 12px; font-size: 11px; text-transform: uppercase; font-weight: bold; color: var(--primary);">Last Updated: July 2026</p>
+
+      <p style="margin-bottom: 16px;">Please read these Terms and Conditions carefully before initiating your account application. By checking the "I accept" box and proceeding with the self-service registration, you agree to be legally bound by this agreement, our Privacy Policy, and all relevant Reserve Bank of Zimbabwe (RBZ) regulations.</p>
+
+      <h3 style="color: var(--text-main); margin-top: 20px; margin-bottom: 8px; font-size: 14px; font-weight: 600;">1. Scope & Eligibility</h3>
+      <ul style="margin-left: 20px; margin-bottom: 16px; list-style-type: disc;">
+        <li>You must be at least 18 years of age to open a self-service personal account.</li>
+        <li>Applications are restricted to Zimbabwean citizens, permanent residents, or foreigners with valid, verified residence permits.</li>
+        <li>You warrant that all information provided during this application is true, accurate, current, and complete.</li>
+      </ul>
+
+      <h3 style="color: var(--text-main); margin-top: 20px; margin-bottom: 8px; font-size: 14px; font-weight: 600;">2. KYC (Know Your Customer) & Digital Identity Verification</h3>
+      <p style="margin-bottom: 16px;">Under the guidelines of the Reserve Bank of Zimbabwe (RBZ), CCF is required to verify the identity of all account holders. You hereby consent and authorize Central Capital Finance to:</p>
+      <ul style="margin-left: 20px; margin-bottom: 16px; list-style-type: disc;">
+        <li>Cross-reference your National ID or Passport details with official governmental registrar databases.</li>
+        <li>Verify your residential address using utility bills, lease agreements, or other approved documents.</li>
+        <li>Perform real-time facial biometric and liveness checks via your device camera to prevent identity theft.</li>
+      </ul>
+
+      <h3 style="color: var(--text-main); margin-top: 20px; margin-bottom: 8px; font-size: 14px; font-weight: 600;">3. Anti-Money Laundering (AML) & Sanctions Compliance</h3>
+      <ul style="margin-left: 20px; margin-bottom: 16px; list-style-type: disc;">
+        <li>You agree that the account will not be used for any illicit activities, including money laundering, terrorist financing, tax evasion, or trade in restricted assets.</li>
+        <li>CCF reserves the right to reject, suspend, or terminate any application or account immediately if a sanctions screening check returns a positive hit or if your profile fails compliance vetting.</li>
+      </ul>
+
+      <h3 style="color: var(--text-main); margin-top: 20px; margin-bottom: 8px; font-size: 14px; font-weight: 600;">4. US Foreign Account Tax Compliance Act (FATCA) Declaration</h3>
+      <p style="margin-bottom: 16px;">If you are a US Citizen, US Permanent Resident (Green Card Holder), or have a US tax status, you are legally required to declare this. Failure to declare or provide the necessary IRS tax forms (e.g., W-9) will result in immediate disqualification and reporting under international tax treaties.</p>
+
+      <h3 style="color: var(--text-main); margin-top: 20px; margin-bottom: 8px; font-size: 14px; font-weight: 600;">5. Data Privacy & Consent</h3>
+      <p style="margin-bottom: 16px;">Pursuant to the Cyber and Data Protection Act [Chapter 12:07] of Zimbabwe, you consent to Central Capital Finance collecting, processing, and storing your sensitive personal data (including biological photos, signatures, address documents, and ID particulars) exclusively for account administration, regulatory compliance, and risk management.</p>
+
+      <h3 style="color: var(--text-main); margin-top: 20px; margin-bottom: 8px; font-size: 14px; font-weight: 600;">6. Electronic Communications & Notifications</h3>
+      <p style="margin-bottom: 16px;">By signing this agreement digitally, you agree to receive automated verification codes (OTP), transaction notifications, and administrative updates via SMS to your registered mobile number and/or email address.</p>
+
+      <h3 style="color: var(--text-main); margin-top: 20px; margin-bottom: 8px; font-size: 14px; font-weight: 600;">7. Electronic Execution & Consent</h3>
+      <p style="margin-bottom: 16px;">You acknowledge that checking the "I accept the Terms and Conditions" checkbox constitutes your digital signature, carrying the same weight and legal enforceability as a physical handwritten signature.</p>
+    </div>
+
+    <!-- Scroll warning notice -->
+    <div class="terms-scroll-alert" style="text-align: center; padding: 10px 20px 0; font-size: 13.5px; font-weight: 600;">
+      <span *ngIf="!hasReadTerms" style="color: #ea580c; display: inline-flex; align-items: center; gap: 6px;">
+        ⬇️ Please scroll down to the bottom of the terms to enable acceptance.
+      </span>
+      <span *ngIf="hasReadTerms" style="color: #16a34a; display: inline-flex; align-items: center; gap: 6px;">
+        ✔️ Thank you. You may now accept the terms and proceed.
+      </span>
+    </div>
+
+    <div class="modal-footer" style="display: flex; justify-content: center; gap: 1rem; width: 100%; padding-top: 15px;">
+      <button class="btn btn-secondary" (click)="declineTerms()">Decline & Exit</button>
+      <button class="btn btn-primary" [disabled]="!hasReadTerms" (click)="acceptTerms()">Accept & Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- Onboarding Portal Layout -->
+<div class="onboarding-viewport" *ngIf="termsAccepted">
+  <div class="onboarding-modal-card">
+    <!-- Top Header Navigation inside Modal -->
+    <header class="stepper-header" style="padding: 0 1.5rem; background: #ffffff; border-bottom: 1px solid rgba(0,0,0,0.06); width: 100%;">
+      <div class="header-container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; height: var(--header-height);">
+        <div class="logo-section" [routerLink]="['/']">
+          <img src="/5940427112177143524_120-removebg-preview.png" alt="Central Capital Finance Logo" class="brand-logo" style="height: 38px;" />
+        </div>
+        <div class="header-actions" style="display: flex; align-items: center;">
+          <button class="btn-close-modal" (click)="exitOnboarding()" title="Exit onboarding" style="background: none; border: none; font-size: 2rem; color: #64748b; cursor: pointer; transition: color 0.2s; padding: 0; line-height: 1; display: flex; align-items: center;">
+            &times;
+          </button>
+        </div>
+      </div>
+    </header>
+
+  <!-- Stepper Body Panel -->
+  <div class="stepper-body">
+    <!-- Left Column Sidebar (Collapses on Mobile) -->
+    <aside class="stepper-sidebar" *ngIf="currentStep <= totalSteps">
+      <h4 class="sidebar-title">Onboarding Steps</h4>
+      <div class="timeline">
+        <!-- Step 1 Indicator -->
+        <div class="timeline-step" [ngClass]="{'active': currentStep === 1, 'completed': isIdentityVerified}">
+          <div class="step-indicator">
+            <span *ngIf="isIdentityVerified">✔️</span>
+            <span *ngIf="!isIdentityVerified">1</span>
+          </div>
+          <div class="step-info">
+            <span class="step-number">Step 1</span>
+            <span class="step-name">Identity Verification</span>
+          </div>
+        </div>
+
+        <!-- Step 2 Indicator -->
+        <div class="timeline-step" [ngClass]="{'active': currentStep === 2, 'completed': personalForm.valid}">
+          <div class="step-indicator">
+            <span *ngIf="personalForm.valid">✔️</span>
+            <span *ngIf="!personalForm.valid">2</span>
+          </div>
+          <div class="step-info">
+            <span class="step-number">Step 2</span>
+            <span class="step-name">Personal Details</span>
+          </div>
+        </div>
+
+        <!-- Step 3 Indicator -->
+        <div class="timeline-step" [ngClass]="{'active': currentStep === 3, 'completed': employmentForm.valid}">
+          <div class="step-indicator">
+            <span *ngIf="employmentForm.valid">✔️</span>
+            <span *ngIf="!employmentForm.valid">3</span>
+          </div>
+          <div class="step-info">
+            <span class="step-number">Step 3</span>
+            <span class="step-name">Employment Details</span>
+          </div>
+        </div>
+
+        <!-- Step 4 Indicator -->
+        <div class="timeline-step" [ngClass]="{'active': currentStep === 4, 'completed': uploadedDocs.length >= 4}">
+          <div class="step-indicator">
+            <span *ngIf="uploadedDocs.length >= 4">✔️</span>
+            <span *ngIf="uploadedDocs.length < 4">4</span>
+          </div>
+          <div class="step-info">
+            <span class="step-number">Step 4</span>
+            <span class="step-name">Documents Upload</span>
+          </div>
+        </div>
+
+        <!-- Step 5 Indicator -->
+        <div class="timeline-step" [ngClass]="{'active': currentStep === 5, 'completed': facialVerificationSuccessful}">
+          <div class="step-indicator">
+            <span *ngIf="facialVerificationSuccessful">✔️</span>
+            <span *ngIf="!facialVerificationSuccessful">5</span>
+          </div>
+          <div class="step-info">
+            <span class="step-number">Step 5</span>
+            <span class="step-name">Facial Biometric</span>
+          </div>
+        </div>
+
+        <!-- Step 6 Indicator -->
+        <div class="timeline-step" [ngClass]="{'active': currentStep === 6, 'completed': isOtpVerified}">
+          <div class="step-indicator">
+            <span *ngIf="isOtpVerified">✔️</span>
+            <span *ngIf="!isOtpVerified">6</span>
+          </div>
+          <div class="step-info">
+            <span class="step-number">Step 6</span>
+            <span class="step-name">Security Verification</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Column Main Forms (Interactive Steps) -->
+    <main class="form-panel glass-panel" [ngClass]="{'success-card': currentStep === 7}">
+      
+      <!-- STEP 1: IDENTITY & VERIFICATION -->
+      <div *ngIf="currentStep === 1" class="step-form-content">
+        <div class="step-title-block">
+          <h2>Identity Verification</h2>
+          <p class="step-subtitle">Let's verify your document records against the national civil registry.</p>
+        </div>
+
+        <form [formGroup]="identityForm" (ngSubmit)="verifyIdentity()">
+          <!-- Document Type Selection Buttons -->
+          <div class="form-group">
+            <label class="form-label">Document Type <span class="required">*</span></label>
+            <div class="document-type-segment">
+              <button 
+                type="button" 
+                class="segment-btn" 
+                [class.active]="identityForm.get('documentType')?.value === 'NATIONAL_ID'"
+                [disabled]="isIdentityVerified"
+                (click)="setDocumentType('NATIONAL_ID')">
+                💳 National ID
+              </button>
+              <button 
+                type="button" 
+                class="segment-btn" 
+                [class.active]="identityForm.get('documentType')?.value === 'PASSPORT'"
+                [disabled]="isIdentityVerified"
+                (click)="setDocumentType('PASSPORT')">
+                📖 Passport
+              </button>
+            </div>
+          </div>
+
+          <!-- Fields Grid -->
+          <!-- If National ID Mode -->
+          <div class="grid-2" *ngIf="identityForm.get('documentType')?.value === 'NATIONAL_ID'">
+            <!-- ID Number Field -->
+            <div class="form-group" [class.has-error]="identityForm.get('documentNumber')?.touched && identityForm.get('documentNumber')?.invalid">
+              <label class="form-label">ID Number <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <input 
+                  type="text" 
+                  formControlName="documentNumber" 
+                  placeholder="E.G. 63 236767 M 34"
+                  [attr.readonly]="isIdentityVerified ? true : null"
+                />
+              </div>
+              <span class="form-error" *ngIf="identityForm.get('documentNumber')?.touched && identityForm.get('documentNumber')?.errors?.['required']">
+                ID Number is required.
+              </span>
+              <span class="form-error" *ngIf="identityForm.get('documentNumber')?.touched && identityForm.get('documentNumber')?.errors?.['invalidNationalId']">
+                {{ identityForm.get('documentNumber')?.errors?.['invalidNationalId'] }}
+              </span>
+            </div>
+
+            <!-- Phone Number Field -->
+            <div class="form-group" [class.has-error]="identityForm.get('phoneNumber')?.touched && identityForm.get('phoneNumber')?.invalid">
+              <label class="form-label">Phone Number <span class="required">*</span></label>
+              <div class="phone-input-group">
+                <div class="country-code-selector" (click)="toggleCountryDropdown($event)" [class.disabled]="isIdentityVerified">
+                  <img [src]="selectedCountry.flag" class="country-flag-img" alt="" />
+                  <span class="country-dial-code">{{ selectedCountry.dialCode }}</span>
+                  <span class="dropdown-chevron">▼</span>
+                  
+                  <div class="country-dropdown-panel" *ngIf="showCountryDropdown" (click)="$event.stopPropagation()">
+                    <div class="dropdown-search-box">
+                      <input 
+                        type="text" 
+                        [(ngModel)]="countrySearchQuery" 
+                        [ngModelOptions]="{standalone: true}"
+                        placeholder="Search..." 
+                        (input)="filterCountries()"
+                      />
+                    </div>
+                    <div class="country-list-options">
+                      <div 
+                        *ngFor="let c of filteredCountryCodes" 
+                        class="country-option" 
+                        [class.selected]="c.code === selectedCountry.code"
+                        (click)="selectCountry(c)"
+                      >
+                        <img [src]="c.flag" class="option-flag" alt="" />
+                        <span class="option-name">{{ c.name }}</span>
+                        <span class="option-dial">{{ c.dialCode }}</span>
+                      </div>
+                      <div class="no-results" *ngIf="filteredCountryCodes.length === 0">
+                        No results
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="input-wrapper local-phone-wrapper">
+                  <input 
+                    type="tel" 
+                    [(ngModel)]="localPhoneNum"
+                    [ngModelOptions]="{standalone: true}"
+                    (input)="updatePhoneNumber()"
+                    placeholder="e.g. 771234567"
+                    [attr.readonly]="isIdentityVerified ? true : null"
+                  />
+                </div>
+              </div>
+              <span class="form-error" *ngIf="identityForm.get('phoneNumber')?.touched && identityForm.get('phoneNumber')?.errors?.['required']">
+                Phone number is required.
+              </span>
+              <span class="form-error" *ngIf="identityForm.get('phoneNumber')?.touched && identityForm.get('phoneNumber')?.errors?.['pattern']">
+                Invalid phone number format.
+              </span>
+            </div>
+          </div>
+
+          <!-- If Passport Mode -->
+          <div *ngIf="identityForm.get('documentType')?.value === 'PASSPORT'">
+            <!-- Row 1: ID Number & Passport Number -->
+            <div class="grid-2">
+              <div class="form-group" [class.has-error]="identityForm.get('documentNumber')?.touched && identityForm.get('documentNumber')?.invalid">
+                <label class="form-label">ID Number <span class="required">*</span></label>
+                <div class="input-wrapper">
+                  <input 
+                    type="text" 
+                    formControlName="documentNumber" 
+                    placeholder="E.G. 63 236767 M 34"
+                    [attr.readonly]="isIdentityVerified ? true : null"
+                  />
+                </div>
+                <span class="form-error" *ngIf="identityForm.get('documentNumber')?.touched && identityForm.get('documentNumber')?.errors?.['required']">
+                  ID Number is required.
+                </span>
+                <span class="form-error" *ngIf="identityForm.get('documentNumber')?.touched && identityForm.get('documentNumber')?.errors?.['invalidNationalId']">
+                  {{ identityForm.get('documentNumber')?.errors?.['invalidNationalId'] }}
+                </span>
+              </div>
+
+              <div class="form-group" [class.has-error]="identityForm.get('passportNumber')?.touched && identityForm.get('passportNumber')?.invalid">
+                <label class="form-label">Passport Number <span class="required">*</span></label>
+                <div class="input-wrapper">
+                  <input 
+                    type="text" 
+                    formControlName="passportNumber" 
+                    placeholder="Passport Number"
+                    [attr.readonly]="isIdentityVerified ? true : null"
+                  />
+                </div>
+                <span class="form-error" *ngIf="identityForm.get('passportNumber')?.touched && identityForm.get('passportNumber')?.errors?.['required']">
+                  Passport Number is required.
+                </span>
+              </div>
+            </div>
+
+            <!-- Row 2: Phone Number, Expiry Date, Issuing Country (3 columns) -->
+            <div class="grid-3" style="margin-top: 1rem;">
+              <div class="form-group" [class.has-error]="identityForm.get('phoneNumber')?.touched && identityForm.get('phoneNumber')?.invalid">
+                <label class="form-label">Phone Number <span class="required">*</span></label>
+                <div class="phone-input-group">
+                  <div class="country-code-selector" (click)="toggleCountryDropdown($event)" [class.disabled]="isIdentityVerified">
+                    <img [src]="selectedCountry.flag" class="country-flag-img" alt="" />
+                    <span class="country-dial-code">{{ selectedCountry.dialCode }}</span>
+                    <span class="dropdown-chevron">▼</span>
+                    
+                    <div class="country-dropdown-panel" *ngIf="showCountryDropdown" (click)="$event.stopPropagation()">
+                      <div class="dropdown-search-box">
+                        <input 
+                          type="text" 
+                          [(ngModel)]="countrySearchQuery" 
+                          [ngModelOptions]="{standalone: true}"
+                          placeholder="Search..." 
+                          (input)="filterCountries()"
+                        />
+                      </div>
+                      <div class="country-list-options">
+                        <div 
+                          *ngFor="let c of filteredCountryCodes" 
+                          class="country-option" 
+                          [class.selected]="c.code === selectedCountry.code"
+                          (click)="selectCountry(c)"
+                        >
+                          <img [src]="c.flag" class="option-flag" alt="" />
+                          <span class="option-name">{{ c.name }}</span>
+                          <span class="option-dial">{{ c.dialCode }}</span>
+                        </div>
+                        <div class="no-results" *ngIf="filteredCountryCodes.length === 0">
+                          No results
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="input-wrapper local-phone-wrapper">
+                    <input 
+                      type="tel" 
+                      [(ngModel)]="localPhoneNum"
+                      [ngModelOptions]="{standalone: true}"
+                      (input)="updatePhoneNumber()"
+                      placeholder="e.g. 771234567"
+                      [attr.readonly]="isIdentityVerified ? true : null"
+                    />
+                  </div>
+                </div>
+                <span class="form-error" *ngIf="identityForm.get('phoneNumber')?.touched && identityForm.get('phoneNumber')?.errors?.['required']">
+                  Phone number is required.
+                </span>
+                <span class="form-error" *ngIf="identityForm.get('phoneNumber')?.touched && identityForm.get('phoneNumber')?.errors?.['pattern']">
+                  Invalid phone number format.
+                </span>
+              </div>
+
+              <div class="form-group" [class.has-error]="identityForm.get('expiryDate')?.touched && identityForm.get('expiryDate')?.invalid">
+                <label class="form-label">Expiry Date <span class="required">*</span></label>
+                <div class="input-wrapper">
+                  <input 
+                    type="date" 
+                    formControlName="expiryDate" 
+                    [attr.readonly]="isIdentityVerified ? true : null"
+                  />
+                </div>
+                <span class="form-error" *ngIf="identityForm.get('expiryDate')?.touched && identityForm.get('expiryDate')?.errors?.['required']">
+                  Expiry Date is required.
+                </span>
+              </div>
+
+              <div class="form-group" [class.has-error]="identityForm.get('issuingCountry')?.touched && identityForm.get('issuingCountry')?.invalid">
+                <label class="form-label">Issuing Country <span class="required">*</span></label>
+                <div class="input-wrapper">
+                  <select formControlName="issuingCountry" [attr.disabled]="isIdentityVerified ? true : null">
+                    <option value="">select</option>
+                    <option *ngFor="let c of countriesList" [value]="c">{{ c }}</option>
+                  </select>
+                </div>
+                <span class="form-error" *ngIf="identityForm.get('issuingCountry')?.touched && identityForm.get('issuingCountry')?.errors?.['required']">
+                  Issuing Country is required.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Security Verification Code (CAPTCHA) -->
+          <div class="form-group" *ngIf="!isIdentityVerified">
+            <!-- Render the new interactive Captcha Component -->
+            <app-captcha (codeGenerated)="onCaptchaCodeGenerated($event)" style="margin-bottom: 0.5rem; display: block;"></app-captcha>
+
+            <span class="form-error" *ngIf="identityForm.get('captchaInput')?.touched && identityForm.get('captchaInput')?.errors?.['required']">
+              Security checkbox validation is required.
+            </span>
+            <span class="form-error" *ngIf="identityForm.get('captchaInput')?.touched && identityForm.get('captchaInput')?.errors?.['incorrect']">
+              Please complete the verification checkbox.
+            </span>
+          </div>
+
+          <!-- Action status indicators -->
+          <div class="verification-status-box" *ngIf="isIdentityVerified">
+            <span>🛡️ Identity Verified successfully. You can now proceed to Step 2.</span>
+          </div>
+        </form>
+      </div>
+
+      <!-- STEP 2: PERSONAL INFORMATION -->
+      <div *ngIf="currentStep === 2" class="step-form-content">
+        <div class="step-title-block">
+          <h2>Personal Details</h2>
+          <p class="step-subtitle">Please fill out your biographical information. Ensure matching data with your ID documents.</p>
+        </div>
+
+        <form [formGroup]="personalForm">
+          <!-- Row 1: Title & First Name -->
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Title <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <select formControlName="title">
+                  <option value="">select</option>
+                  <option value="MR">Mr.</option>
+                  <option value="MRS">Mrs.</option>
+                  <option value="MISS">Miss</option>
+                  <option value="MS">Ms.</option>
+                  <option value="DR">Dr.</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group" [class.has-error]="personalForm.get('firstName')?.touched && personalForm.get('firstName')?.invalid">
+              <label class="form-label">First Name <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <input type="text" formControlName="firstName" placeholder="enter your first name" />
+              </div>
+              <span class="form-error" *ngIf="personalForm.get('firstName')?.touched && personalForm.get('firstName')?.errors?.['required']">
+                First name is required.
+              </span>
+            </div>
+          </div>
+
+          <!-- Row 2: Middle Name & Last Name -->
+          <div class="grid-2" style="margin-top: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Middle Name</label>
+              <div class="input-wrapper">
+                <input type="text" formControlName="middleName" placeholder="enter your middle name" />
+              </div>
+            </div>
+
+            <div class="form-group" [class.has-error]="personalForm.get('lastName')?.touched && personalForm.get('lastName')?.invalid">
+              <label class="form-label">Last Name <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <input type="text" formControlName="lastName" placeholder="enter your last name" />
+              </div>
+              <span class="form-error" *ngIf="personalForm.get('lastName')?.touched && personalForm.get('lastName')?.errors?.['required']">
+                Last name is required.
+              </span>
+            </div>
+          </div>
+
+          <!-- Row 3: Gender Selection & Date of Birth -->
+          <div class="grid-2" style="margin-top: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Gender Selection <span class="required">*</span></label>
+              <div class="radio-group" style="padding-top: 0.5rem;">
+                <label class="radio-label">
+                  <input type="radio" value="MALE" formControlName="gender"> Male
+                </label>
+                <label class="radio-label">
+                  <input type="radio" value="FEMALE" formControlName="gender"> Female
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Date of Birth <span class="required">*</span></label>
+              <div class="grid-3">
+                <div class="input-wrapper">
+                  <select formControlName="dobDay">
+                    <option value="">select</option>
+                    <option *ngFor="let d of getDaysArray()" [value]="d">{{ d }}</option>
+                  </select>
+                </div>
+                <div class="input-wrapper">
+                  <select formControlName="dobMonth">
+                    <option value="">select</option>
+                    <option *ngFor="let m of getMonthsArray()" [value]="m.val">{{ m.label }}</option>
+                  </select>
+                </div>
+                <div class="input-wrapper">
+                  <select formControlName="dobYear">
+                    <option value="">select</option>
+                    <option *ngFor="let y of getYearsArray()" [value]="y">{{ y }}</option>
+                  </select>
+                </div>
+              </div>
+              <span class="form-error" *ngIf="personalForm.errors?.['invalidDate']">
+                {{ personalForm.errors?.['invalidDate'] }}
+              </span>
+              <span class="form-error" *ngIf="personalForm.errors?.['underage']">
+                {{ personalForm.errors?.['underage'] }}
+              </span>
+            </div>
+          </div>
+
+          <div class="alert-box danger" *ngIf="personalForm.errors?.['titleGenderMismatch']" style="margin-top: 1rem;">
+            <span class="alert-icon">⚠️</span>
+            <span>{{ personalForm.errors?.['titleGenderMismatch'] }}</span>
+          </div>
+
+          <!-- Row 4: Citizenship Status & Country of Birth -->
+          <div class="grid-2" style="margin-top: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Citizenship Status <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <select formControlName="citizenship">
+                  <option value="">select</option>
+                  <option value="Resident">Citizen / Permanent Resident</option>
+                  <option value="Non-Resident">Non-Resident / Diaspora</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Country of Birth <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <select formControlName="countryOfBirth">
+                  <option value="">select</option>
+                  <option *ngFor="let c of countriesList" [value]="c">{{ c }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- FATF High-Risk warning notice -->
+          <div class="alert-box warning" *ngIf="isHighRiskBirthCountry" style="margin-top: 1rem;">
+            <span class="alert-icon">⚠️</span>
+            <span><strong>FATF High-Risk Jurisdiction Warning:</strong> Because your birth country is classified under enhanced compliance parameters, additional documentation audits may apply.</span>
+          </div>
+
+          <!-- Residential address -->
+          <h3 style="margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.5rem; font-size: 1.1rem;">Residential Address</h3>
+          
+          <!-- Row 5: Street Address & City -->
+          <div class="grid-2">
+            <div class="form-group" [class.has-error]="personalForm.get('addressLine1')?.touched && personalForm.get('addressLine1')?.invalid">
+              <label class="form-label">Street / House Number <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <input type="text" formControlName="addressLine1" placeholder="enter your address" />
+              </div>
+              <span class="form-error" *ngIf="personalForm.get('addressLine1')?.touched && personalForm.get('addressLine1')?.errors?.['required']">
+                Street address is required.
+              </span>
+            </div>
+
+            <div class="form-group" [class.has-error]="personalForm.get('city')?.touched && personalForm.get('city')?.invalid">
+              <label class="form-label">City / Town <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <input type="text" formControlName="city" placeholder="enter your city" />
+              </div>
+              <span class="form-error" *ngIf="personalForm.get('city')?.touched && personalForm.get('city')?.errors?.['required']">
+                City is required.
+              </span>
+            </div>
+          </div>
+
+          <!-- Row 6: Country & Postal Code -->
+          <div class="grid-2" style="margin-top: 1rem;">
+            <div class="form-group" [class.has-error]="personalForm.get('country')?.touched && personalForm.get('country')?.invalid">
+              <label class="form-label">Country <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <select formControlName="country">
+                  <option value="">select</option>
+                  <option *ngFor="let c of countriesList" [value]="c">{{ c }}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group" [class.has-error]="personalForm.get('postalCode')?.touched && personalForm.get('postalCode')?.invalid">
+              <label class="form-label">Postal / ZIP Code</label>
+              <div class="input-wrapper">
+                <input type="text" formControlName="postalCode" placeholder="enter your postal code" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 7: Postal Address Match selector -->
+          <div class="grid-2" style="margin-top: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Is your postal address the same as residential? <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <select formControlName="isPostalSame">
+                  <option value="">select</option>
+                  <option value="YES">Yes, same as residential</option>
+                  <option value="NO">No, postal address is different</option>
+                </select>
+              </div>
+            </div>
+            <div></div>
+          </div>
+        </form>
+      </div>
+
+      <!-- STEP 3: EMPLOYMENT DETAILS -->
+      <div *ngIf="currentStep === 3" class="step-form-content">
+        <div class="step-title-block">
+          <h2>Employment details</h2>
+          <p class="step-subtitle">Tell us about your professional background and financial parameters.</p>
+        </div>
+
+        <form [formGroup]="employmentForm">
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Employment Status <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <select formControlName="employmentStatus">
+                  <option value="">select</option>
+                  <option value="PERMANENT">PERMANENT</option>
+                  <option value="TEMPORARY">TEMPORARY</option>
+                  <option value="PART_TIME">PART TIME</option>
+                  <option value="SELF_EMPLOYED">SELF EMPLOYED</option>
+                  <option value="RETIRED_PENSIONER">RETIRED PENSIONER</option>
+                  <option value="RETIRED_NON_PENSIONER">RETIRED NON-PENSIONER</option>
+                  <option value="UNEMPLOYED">UNEMPLOYED</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group" 
+                 *ngIf="['PERMANENT', 'TEMPORARY', 'PART_TIME', 'SELF_EMPLOYED', 'RETIRED_PENSIONER', 'RETIRED_NON_PENSIONER'].includes(employmentForm.get('employmentStatus')?.value)"
+                 [class.has-error]="employmentForm.get('monthlySalary')?.touched && employmentForm.get('monthlySalary')?.invalid">
+              <label class="form-label">Net Monthly Income (USD) <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <input type="number" formControlName="monthlySalary" placeholder="e.g. 1500" />
+              </div>
+              <span class="form-error" *ngIf="employmentForm.get('monthlySalary')?.touched && employmentForm.get('monthlySalary')?.errors?.['required']">
+                Monthly income is required.
+              </span>
+              <span class="form-error" *ngIf="employmentForm.get('monthlySalary')?.touched && employmentForm.get('monthlySalary')?.errors?.['min']">
+                Salary must be a positive number.
+              </span>
+            </div>
+          </div>
+
+          <!-- Conditional Source #1 card for Unemployed -->
+          <div *ngIf="employmentForm.get('employmentStatus')?.value === 'UNEMPLOYED'">
+            <div formArrayName="sources">
+              <div *ngFor="let sourceGroup of sourcesArray.controls; let i = index" [formGroupName]="i" class="source-card" style="margin-bottom: 1.5rem;">
+                <div class="source-card-header">
+                  <span class="source-card-title">Source #{{ i + 1 }}</span>
+                  <button type="button" class="btn-clear-source" (click)="removeSource(i)" title="Remove source">
+                    🗑️
+                  </button>
+                </div>
+                <div class="source-card-body">
+                  <div class="grid-2">
+                    <div class="form-group" [class.has-error]="sourceGroup.get('sourceOfIncome')?.touched && sourceGroup.get('sourceOfIncome')?.invalid">
+                      <label class="form-label"><span class="required">*</span> Source</label>
+                      <div class="input-wrapper">
+                        <select formControlName="sourceOfIncome">
+                          <option value="">Select source</option>
+                          <option value="SAVINGS">Savings</option>
+                          <option value="FAMILY_SUPPORT">Family Support</option>
+                          <option value="INHERITANCE">Inheritance</option>
+                          <option value="INVESTMENT">Investment / Interest</option>
+                          <option value="BUSINESS">Business Profits</option>
+                          <option value="PENSION">Pension</option>
+                          <option value="SPOUSE_SUPPORT">Spouse Support</option>
+                          <option value="OTHER">Other</option>
+                        </select>
+                      </div>
+                      <span class="form-error" *ngIf="sourceGroup.get('sourceOfIncome')?.touched && sourceGroup.get('sourceOfIncome')?.errors?.['required']">
+                        Source of income is required.
+                      </span>
+                    </div>
+
+                    <div class="form-group" [class.has-error]="sourceGroup.get('incomeCurrency')?.touched && sourceGroup.get('incomeCurrency')?.invalid">
+                      <label class="form-label"><span class="required">*</span> Currency</label>
+                      <div class="input-wrapper">
+                        <select formControlName="incomeCurrency">
+                          <option value="">Select currency</option>
+                          <option value="EUR">EUR - Euro</option>
+                          <option value="GBP">GBP - British Pound</option>
+                          <option value="USD">USD - United States Dollar</option>
+                          <option value="ZAR">ZAR - South African Rand</option>
+                          <option value="ZWG">ZWG - Zimbabwe Gold</option>
+                        </select>
+                      </div>
+                      <span class="form-error" *ngIf="sourceGroup.get('incomeCurrency')?.touched && sourceGroup.get('incomeCurrency')?.errors?.['required']">
+                        Currency is required.
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="grid-2">
+                    <div class="form-group" [class.has-error]="sourceGroup.get('incomeAmount')?.touched && sourceGroup.get('incomeAmount')?.invalid">
+                      <label class="form-label"><span class="required">*</span> Amount</label>
+                      <div class="input-wrapper">
+                        <input type="number" formControlName="incomeAmount" placeholder="Enter amount" />
+                      </div>
+                      <span class="form-error" *ngIf="sourceGroup.get('incomeAmount')?.touched && sourceGroup.get('incomeAmount')?.errors?.['required']">
+                        Amount is required.
+                      </span>
+                      <span class="form-error" *ngIf="sourceGroup.get('incomeAmount')?.touched && sourceGroup.get('incomeAmount')?.errors?.['min']">
+                        Amount must be a positive number.
+                      </span>
+                    </div>
+                    <div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Button to add more sources -->
+            <div style="margin-top: 1rem; text-align: right;">
+              <button type="button" class="btn btn-secondary" (click)="addSource()">
+                ➕ Add Another Source
+              </button>
+            </div>
+          </div>
+
+          <!-- Conditional professional fields (Hidden for unemployed / student / retired / empty) -->
+          <div *ngIf="employmentForm.get('employmentStatus')?.value === 'PERMANENT' || employmentForm.get('employmentStatus')?.value === 'TEMPORARY' || employmentForm.get('employmentStatus')?.value === 'PART_TIME' || employmentForm.get('employmentStatus')?.value === 'SELF_EMPLOYED'">
+            <div class="grid-2">
+              <div class="form-group" [class.has-error]="employmentForm.get('employerName')?.touched && employmentForm.get('employerName')?.invalid">
+                <label class="form-label">Employer Name <span class="required">*</span></label>
+                <div class="input-wrapper">
+                  <input type="text" formControlName="employerName" placeholder="e.g. Digital Systems Ltd" />
+                </div>
+                <span class="form-error" *ngIf="employmentForm.get('employerName')?.touched && employmentForm.get('employerName')?.errors?.['required']">
+                  Employer name is required.
+                </span>
+              </div>
+
+              <div class="form-group" [class.has-error]="employmentForm.get('occupation')?.touched && employmentForm.get('occupation')?.invalid">
+                <label class="form-label">Occupation <span class="required">*</span></label>
+                <div class="input-wrapper">
+                  <input type="text" formControlName="occupation" placeholder="e.g. Accountant" />
+                </div>
+                <span class="form-error" *ngIf="employmentForm.get('occupation')?.touched && employmentForm.get('occupation')?.errors?.['required']">
+                  Occupation is required.
+                </span>
+              </div>
+            </div>
+
+            <div class="form-group" [class.has-error]="employmentForm.get('employerAddress')?.touched && employmentForm.get('employerAddress')?.invalid">
+              <label class="form-label">Employer Office Address <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <textarea formControlName="employerAddress" rows="3" placeholder="Street, City, Country of employer office"></textarea>
+              </div>
+              <span class="form-error" *ngIf="employmentForm.get('employerAddress')?.touched && employmentForm.get('employerAddress')?.errors?.['required']">
+                Employer address is required.
+              </span>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- STEP 4: DOCUMENTS UPLOAD -->
+      <div *ngIf="currentStep === 4" class="step-form-content">
+        <div class="step-title-block">
+          <h2>KYC Document Upload</h2>
+          <p class="step-subtitle">Upload high-resolution images or PDF documents matching the details entered.</p>
+        </div>
+
+        <div class="document-table-card">
+          <table class="document-table">
+            <thead>
+              <tr>
+                <th>Document Category</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Row 1: Coloured Passport Size Photo -->
+              <tr>
+                <td>
+                  <div class="doc-title-container">
+                    <span class="doc-title">Coloured Passport Size Photo <span class="required">*</span> <span class="doc-limit">(Limit: 5MB)</span></span>
+                  </div>
+                </td>
+                <td>
+                  <div class="status-cell-content">
+                    <ng-container *ngIf="!getDocument('PROFILE_PHOTO')">
+                      <span class="status-icon-required">⚠️</span>
+                      <span class="status-text-required">Required</span>
+                    </ng-container>
+                    <ng-container *ngIf="getDocument('PROFILE_PHOTO')">
+                      <span class="status-icon-uploaded">✔️</span>
+                      <span class="status-text-uploaded">Uploaded</span>
+                    </ng-container>
+                  </div>
+                </td>
+                <td>
+                  <div class="action-cell-content">
+                    <div>
+                      <input type="file" id="file-profile-photo" style="display: none;" (change)="onFileSelected($event, 'PROFILE_PHOTO')" accept="image/*,application/pdf" />
+                      <label for="file-profile-photo" class="btn-choose-file">Choose File</label>
+                    </div>
+                    
+                    <!-- Progress bar -->
+                    <div class="upload-progress-container" *ngIf="uploadingCategory === 'PROFILE_PHOTO'" style="margin-top: 0.5rem; max-width: 250px;">
+                      <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" [style.width.%]="getDocument('PROFILE_PHOTO')?.progress"></div>
+                      </div>
+                      <div class="progress-text">
+                        <span>Uploading... {{ getDocument('PROFILE_PHOTO')?.progress }}%</span>
+                      </div>
+                    </div>
+
+                    <div class="file-preview-inline" *ngIf="getDocument('PROFILE_PHOTO') && uploadingCategory !== 'PROFILE_PHOTO'">
+                      <span class="file-name-inline" [title]="getDocument('PROFILE_PHOTO')?.name">{{ getDocument('PROFILE_PHOTO')?.name }}</span>
+                      <button type="button" class="btn-remove-file-inline" (click)="removeDocument('PROFILE_PHOTO')">Remove</button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Row 2: Valid ID Document -->
+              <tr>
+                <td>
+                  <div class="doc-title-container">
+                    <span class="doc-title">Valid ID Document <span class="required">*</span> <span class="doc-limit">(Limit: 5MB)</span></span>
+                  </div>
+                </td>
+                <td>
+                  <div class="status-cell-content">
+                    <ng-container *ngIf="!getDocument('IDENTITY_DOCUMENT')">
+                      <span class="status-icon-required">⚠️</span>
+                      <span class="status-text-required">Required</span>
+                    </ng-container>
+                    <ng-container *ngIf="getDocument('IDENTITY_DOCUMENT')">
+                      <span class="status-icon-uploaded">✔️</span>
+                      <span class="status-text-uploaded">Uploaded</span>
+                    </ng-container>
+                  </div>
+                </td>
+                <td>
+                  <div class="action-cell-content">
+                    <div>
+                      <input type="file" id="file-identity-document" style="display: none;" (change)="onFileSelected($event, 'IDENTITY_DOCUMENT')" accept="image/*,application/pdf" />
+                      <label for="file-identity-document" class="btn-choose-file">Choose File</label>
+                    </div>
+
+                    <!-- Progress bar -->
+                    <div class="upload-progress-container" *ngIf="uploadingCategory === 'IDENTITY_DOCUMENT'" style="margin-top: 0.5rem; max-width: 250px;">
+                      <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" [style.width.%]="getDocument('IDENTITY_DOCUMENT')?.progress"></div>
+                      </div>
+                      <div class="progress-text">
+                        <span>Uploading... {{ getDocument('IDENTITY_DOCUMENT')?.progress }}%</span>
+                      </div>
+                    </div>
+
+                    <div class="file-preview-inline" *ngIf="getDocument('IDENTITY_DOCUMENT') && uploadingCategory !== 'IDENTITY_DOCUMENT'">
+                      <span class="file-name-inline" [title]="getDocument('IDENTITY_DOCUMENT')?.name">{{ getDocument('IDENTITY_DOCUMENT')?.name }}</span>
+                      <button type="button" class="btn-remove-file-inline" (click)="removeDocument('IDENTITY_DOCUMENT')">Remove</button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Row 3: Proof of Residence -->
+              <tr>
+                <td>
+                  <div class="doc-title-container">
+                    <span class="doc-title">Proof of Residence <span class="required">*</span> <span class="doc-limit">(Limit: 5MB)</span></span>
+                  </div>
+                </td>
+                <td>
+                  <div class="status-cell-content">
+                    <ng-container *ngIf="!getDocument('PROOF_OF_RESIDENCE')">
+                      <span class="status-icon-required">⚠️</span>
+                      <span class="status-text-required">Required</span>
+                    </ng-container>
+                    <ng-container *ngIf="getDocument('PROOF_OF_RESIDENCE')">
+                      <span class="status-icon-uploaded">✔️</span>
+                      <span class="status-text-uploaded">Uploaded</span>
+                    </ng-container>
+                  </div>
+                </td>
+                <td>
+                  <div class="action-cell-content">
+                    <div>
+                      <input type="file" id="file-proof-residence" style="display: none;" (change)="onFileSelected($event, 'PROOF_OF_RESIDENCE')" accept="image/*,application/pdf" />
+                      <label for="file-proof-residence" class="btn-choose-file">Choose File</label>
+                    </div>
+
+                    <!-- Progress bar -->
+                    <div class="upload-progress-container" *ngIf="uploadingCategory === 'PROOF_OF_RESIDENCE'" style="margin-top: 0.5rem; max-width: 250px;">
+                      <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" [style.width.%]="getDocument('PROOF_OF_RESIDENCE')?.progress"></div>
+                      </div>
+                      <div class="progress-text">
+                        <span>Uploading... {{ getDocument('PROOF_OF_RESIDENCE')?.progress }}%</span>
+                      </div>
+                    </div>
+
+                    <div class="file-preview-inline" *ngIf="getDocument('PROOF_OF_RESIDENCE') && uploadingCategory !== 'PROOF_OF_RESIDENCE'">
+                      <span class="file-name-inline" [title]="getDocument('PROOF_OF_RESIDENCE')?.name">{{ getDocument('PROOF_OF_RESIDENCE')?.name }}</span>
+                      <button type="button" class="btn-remove-file-inline" (click)="removeDocument('PROOF_OF_RESIDENCE')">Remove</button>
+                    </div>
+                    <span class="action-hint">Not older than 3 months</span>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Row 4: Specimen Signature -->
+              <tr>
+                <td>
+                  <div class="doc-title-container">
+                    <span class="doc-title">Specimen Signature <span class="required">*</span> <span class="doc-limit">(Limit: 5MB)</span></span>
+                  </div>
+                </td>
+                <td>
+                  <div class="status-cell-content">
+                    <ng-container *ngIf="!getDocument('SIGNATURE_SPECIMEN')">
+                      <span class="status-icon-required">⚠️</span>
+                      <span class="status-text-required">Required</span>
+                    </ng-container>
+                    <ng-container *ngIf="getDocument('SIGNATURE_SPECIMEN')">
+                      <span class="status-icon-uploaded">✔️</span>
+                      <span class="status-text-uploaded">Uploaded</span>
+                    </ng-container>
+                  </div>
+                </td>
+                <td>
+                  <div class="action-cell-content">
+                    <div>
+                      <input type="file" id="file-signature-specimen" style="display: none;" (change)="onFileSelected($event, 'SIGNATURE_SPECIMEN')" accept="image/*,application/pdf" />
+                      <label for="file-signature-specimen" class="btn-choose-file">Choose File</label>
+                    </div>
+
+                    <!-- Progress bar -->
+                    <div class="upload-progress-container" *ngIf="uploadingCategory === 'SIGNATURE_SPECIMEN'" style="margin-top: 0.5rem; max-width: 250px;">
+                      <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" [style.width.%]="getDocument('SIGNATURE_SPECIMEN')?.progress"></div>
+                      </div>
+                      <div class="progress-text">
+                        <span>Uploading... {{ getDocument('SIGNATURE_SPECIMEN')?.progress }}%</span>
+                      </div>
+                    </div>
+
+                    <div class="file-preview-inline" *ngIf="getDocument('SIGNATURE_SPECIMEN') && uploadingCategory !== 'SIGNATURE_SPECIMEN'">
+                      <span class="file-name-inline" [title]="getDocument('SIGNATURE_SPECIMEN')?.name">{{ getDocument('SIGNATURE_SPECIMEN')?.name }}</span>
+                      <button type="button" class="btn-remove-file-inline" (click)="removeDocument('SIGNATURE_SPECIMEN')">Remove</button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Row 5: Proof of Income -->
+              <tr>
+                <td>
+                  <div class="doc-title-container">
+                    <span class="doc-title">Proof of Income <span class="required">*</span> <span class="doc-limit">(Limit: 5MB)</span></span>
+                  </div>
+                </td>
+                <td>
+                  <div class="status-cell-content">
+                    <ng-container *ngIf="!getDocument('PROOF_OF_INCOME')">
+                      <span class="status-icon-required">⚠️</span>
+                      <span class="status-text-required">Required</span>
+                    </ng-container>
+                    <ng-container *ngIf="getDocument('PROOF_OF_INCOME')">
+                      <span class="status-icon-uploaded">✔️</span>
+                      <span class="status-text-uploaded">Uploaded</span>
+                    </ng-container>
+                  </div>
+                </td>
+                <td>
+                  <div class="action-cell-content">
+                    <div>
+                      <input type="file" id="file-proof-income" style="display: none;" (change)="onFileSelected($event, 'PROOF_OF_INCOME')" accept="image/*,application/pdf" />
+                      <label for="file-proof-income" class="btn-choose-file">Choose File</label>
+                    </div>
+
+                    <!-- Progress bar -->
+                    <div class="upload-progress-container" *ngIf="uploadingCategory === 'PROOF_OF_INCOME'" style="margin-top: 0.5rem; max-width: 250px;">
+                      <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" [style.width.%]="getDocument('PROOF_OF_INCOME')?.progress"></div>
+                      </div>
+                      <div class="progress-text">
+                        <span>Uploading... {{ getDocument('PROOF_OF_INCOME')?.progress }}%</span>
+                      </div>
+                    </div>
+
+                    <div class="file-preview-inline" *ngIf="getDocument('PROOF_OF_INCOME') && uploadingCategory !== 'PROOF_OF_INCOME'">
+                      <span class="file-name-inline" [title]="getDocument('PROOF_OF_INCOME')?.name">{{ getDocument('PROOF_OF_INCOME')?.name }}</span>
+                      <button type="button" class="btn-remove-file-inline" (click)="removeDocument('PROOF_OF_INCOME')">Remove</button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- STEP 5: FACIAL BIOMETRIC SCANNING -->
+      <div *ngIf="currentStep === 5" class="step-form-content">
+        <div class="step-title-block">
+          <h2>Facial Biometric Liveness</h2>
+          <p class="step-subtitle">Perform a real-time liveness check to match your facial profile against your identity document photo.</p>
+        </div>
+
+        <div class="webcam-container">
+          <!-- webcam circular scanner view -->
+          <div class="webcam-frame" [ngClass]="biometricState">
+            <!-- Simulated video feed background -->
+            <img class="webcam-feed" src="/landing_background.png" *ngIf="biometricState === 'scanning' || biometricState === 'processing'" />
+            <img class="webcam-feed" [src]="getDocument('PROFILE_PHOTO')?.url" *ngIf="biometricState === 'done'" />
+            
+            <div class="webcam-scanning-line" *ngIf="biometricState === 'scanning'"></div>
+            <div class="webcam-placeholder-icon" *ngIf="biometricState === 'idle'">👤</div>
+            <div class="webcam-status-overlay">{{ biometricMessage }}</div>
+          </div>
+
+          <!-- Liveness progress indicators -->
+          <div class="upload-progress-container" *ngIf="biometricState === 'scanning'" style="margin-bottom: 1.5rem;">
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" [style.width.%]="biometricProgress"></div>
+            </div>
+            <div class="progress-text" style="color: var(--text-main); font-weight: 600;">
+              <span>Liveness Scan Progress:</span>
+              <span>{{ biometricProgress }}%</span>
+            </div>
+          </div>
+
+          <!-- Scan details matching results -->
+          <div class="scan-metrics" *ngIf="facialVerificationDone">
+            <h4 style="margin-bottom: 0.5rem; color: var(--text-main);">Verification Metrics</h4>
+            <div class="metric-row">
+              <span class="metric-label">Facial Match confidence:</span>
+              <span class="metric-value" [ngClass]="{'success-text': facialVerificationSuccessful}">{{ biometricSimilarityScore }}%</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Liveness check score:</span>
+              <span class="metric-value" [ngClass]="{'success-text': biometricLivenessScore > 90}">{{ biometricLivenessScore }}%</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Verification Verdict:</span>
+              <span class="metric-value success-text" style="text-transform: uppercase;">✔️ SUCCESS</span>
+            </div>
+          </div>
+
+          <!-- Trigger controls -->
+          <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+            <button class="btn btn-primary" (click)="startLivenessCheck()" *ngIf="biometricState === 'idle' || biometricState === 'failed'">
+              📷 Start Biometric Scan
+            </button>
+            <button class="btn btn-secondary" (click)="resetBiometrics()" *ngIf="biometricState === 'done' || biometricState === 'processing'">
+              🔄 Retake Scan
+            </button>
+            <div class="spinner-primary" *ngIf="biometricState === 'processing'"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 6: SECURITY VERIFICATION -->
+      <div *ngIf="currentStep === 6" class="step-form-content">
+        <div class="step-title-block">
+          <h2>Security Verification</h2>
+          <p class="step-subtitle">Secure your account by creating a password and performing multi-factor authentication verification.</p>
+        </div>
+
+        <!-- Stage 1: PASSWORD -->
+        <div *ngIf="securityStepStage === 'PASSWORD'" class="password-setup-container">
+          <p style="margin-bottom: 1.5rem; font-size: 0.9rem; line-height: 1.4; color: #333;">
+            Please set up a secure password to access your Customer Dashboard.
+          </p>
+
+          <form [formGroup]="passwordForm">
+            <div class="grid-2">
+              <div class="form-group" [class.has-error]="passwordForm.get('password')?.touched && passwordForm.get('password')?.invalid">
+                <label class="form-label">Create Password <span class="required">*</span></label>
+                <div class="input-wrapper">
+                  <input type="password" formControlName="password" placeholder="Enter password (min 8 chars)" />
+                </div>
+                <span class="form-error" *ngIf="passwordForm.get('password')?.touched && passwordForm.get('password')?.errors?.['required']">
+                  Password is required.
+                </span>
+                <span class="form-error" *ngIf="passwordForm.get('password')?.touched && passwordForm.get('password')?.errors?.['minlength']">
+                  Password must be at least 8 characters long.
+                </span>
+              </div>
+
+              <div class="form-group" [class.has-error]="passwordForm.get('confirmPassword')?.touched && passwordForm.get('confirmPassword')?.invalid">
+                <label class="form-label">Repeat Password <span class="required">*</span></label>
+                <div class="input-wrapper">
+                  <input type="password" formControlName="confirmPassword" placeholder="Confirm password" />
+                </div>
+                <span class="form-error" *ngIf="passwordForm.get('confirmPassword')?.touched && passwordForm.get('confirmPassword')?.errors?.['required']">
+                  Please repeat the password.
+                </span>
+                <span class="form-error" *ngIf="passwordForm.errors?.['passwordMismatch'] && passwordForm.get('confirmPassword')?.touched">
+                  Passwords do not match.
+                </span>
+              </div>
+            </div>
+
+          </form>
+        </div>
+
+        <!-- Stage 2: OTP_DISPATCH -->
+        <div *ngIf="securityStepStage === 'OTP_DISPATCH'" class="otp-dispatch-container">
+          <p style="margin-bottom: 1.5rem; font-size: 0.9rem; line-height: 1.4; color: #333;">
+            To complete your security verification, we need to send you a 6-digit OTP code. Please choose your preferred transmission channel below:
+          </p>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; max-width: 500px;">
+            <!-- SMS Card Option -->
+            <div 
+              class="segment-btn" 
+              style="display: flex; flex-direction: row; padding: 0.75rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all 0.2s; align-items: center; gap: 0.75rem;"
+              [style.borderColor]="otpDispatchMethod === 'SMS' ? '#0076f6' : '#e2e8f0'"
+              [style.background]="otpDispatchMethod === 'SMS' ? '#f0f7ff' : '#ffffff'"
+              (click)="otpDispatchMethod = 'SMS'"
+            >
+              <span style="font-size: 1.5rem; line-height: 1;">💬</span>
+              <div style="display: flex; flex-direction: column; text-align: left; line-height: 1.2;">
+                <strong style="color: #333; font-size: 0.9rem;">SMS Text</strong>
+                <span style="font-size: 0.75rem; color: #666;">Send code to phone</span>
+              </div>
+            </div>
+
+            <!-- Email Card Option -->
+            <div 
+              class="segment-btn" 
+              style="display: flex; flex-direction: row; padding: 0.75rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all 0.2s; align-items: center; gap: 0.75rem;"
+              [style.borderColor]="otpDispatchMethod === 'EMAIL' ? '#0076f6' : '#e2e8f0'"
+              [style.background]="otpDispatchMethod === 'EMAIL' ? '#f0f7ff' : '#ffffff'"
+              (click)="otpDispatchMethod = 'EMAIL'"
+            >
+              <span style="font-size: 1.5rem; line-height: 1;">📧</span>
+              <div style="display: flex; flex-direction: column; text-align: left; line-height: 1.2;">
+                <strong style="color: #333; font-size: 0.9rem;">Email Address</strong>
+                <span style="font-size: 0.75rem; color: #666;">Send code to email</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Stage 3: OTP_VERIFICATION -->
+        <div *ngIf="securityStepStage === 'OTP_VERIFICATION'" class="otp-verify-section">
+          <p style="margin-bottom: 1.5rem; font-size: 0.9rem; line-height: 1.4; color: #333;">
+            A 6-digit verification code has been dispatched via <strong>{{ otpDispatchMethod }}</strong>. Check the mock notification popup at the top-right of your screen and enter it below.
+          </p>
+
+          <form [formGroup]="otpForm" style="max-width: 360px; margin: 0 auto 1.5rem auto; display: flex; flex-direction: column; align-items: center; text-align: center;">
+            <div class="form-group" [class.has-error]="otpForm.get('otpInput')?.touched && otpForm.get('otpInput')?.invalid" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+              <label class="form-label" style="text-align: center; width: 100%;">Enter 6-Digit Code <span class="required">*</span></label>
+              <div class="input-wrapper" style="width: 100%; max-width: 280px;">
+                <input 
+                  type="text" 
+                  formControlName="otpInput" 
+                  [attr.readonly]="isOtpVerified ? true : null"
+                  style="text-align: center; font-size: 1.25rem; letter-spacing: 3px;"
+                />
+              </div>
+              <span class="form-error" *ngIf="otpForm.get('otpInput')?.touched && otpForm.get('otpInput')?.errors?.['required']" style="width: 100%; text-align: center; display: block;">
+                OTP code is required.
+              </span>
+              <span class="form-error" *ngIf="otpForm.get('otpInput')?.touched && otpForm.get('otpInput')?.errors?.['pattern']" style="width: 100%; text-align: center; display: block;">
+                Code must be a 6-digit numeric combination.
+              </span>
+              <span class="form-error" *ngIf="otpForm.get('otpInput')?.touched && otpForm.get('otpInput')?.errors?.['incorrect']" style="width: 100%; text-align: center; display: block;">
+                Incorrect code. Check the mock popup message.
+              </span>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 1rem; justify-content: center; width: 100%;" *ngIf="!isOtpVerified">
+              <button type="button" class="btn btn-primary" [disabled]="otpForm.invalid" (click)="verifyOtp()">Verify Code</button>
+              <button type="button" class="btn btn-secondary" (click)="sendOtpBySelectedMethod(otpDispatchMethod)">Resend OTP</button>
+            </div>
+
+            <div class="verification-status-box" *ngIf="isOtpVerified" style="margin-top: 1rem; color: #2e7d32; font-weight: 600; text-align: center; width: 100%;">
+              ✔️ Security OTP Verified. Signed off successfully. Ready to submit!
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- SUCCESS PAGE & CUSTOMER DASHBOARD (STEP 7) -->
+      <div *ngIf="currentStep === 7">
+        
+        <!-- Welcome Screen (Email & SMS Inbox notifications) -->
+        <div *ngIf="!showDashboard" class="welcome-notif-container">
+          <div class="step-title-block" style="text-align: center; margin-bottom: 2rem;">
+            <div class="success-icon" style="font-size: 3rem; margin-bottom: 1rem; color: #2e7d32;">🎉</div>
+            <h2>Onboarding Approved!</h2>
+            <p class="step-subtitle">You have successfully received your welcome letter and activation notifications via Email and SMS.</p>
+          </div>
+
+          <div class="notif-channels-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2.5rem;">
+            <!-- SMS Welcome Letter Simulation -->
+            <div class="sms-simulation-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow: hidden;">
+              <div style="background: #f1f5f9; padding: 0.75rem 1rem; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 0.5rem;">
+                <span style="font-size: 1.2rem;">💬</span>
+                <span style="font-weight: 600; color: #334155; font-size: 0.85rem;">SMS Notification from CCF</span>
+              </div>
+              <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+                <div style="align-self: flex-start; background: #e2e8f0; padding: 1rem; border-radius: 18px 18px 18px 4px; max-width: 85%; font-size: 0.85rem; line-height: 1.4; color: #1e293b;">
+                  Welcome to Central Capital Finance! Your digital account is active. Ref: <strong>{{ referenceNumber }}</strong>. Use your Reference Number and password to log in to the Customer Portal. Visit selected branch code 999 to collect your Visa debit card.
+                </div>
+              </div>
+            </div>
+
+            <!-- Email Welcome Letter Simulation -->
+            <div class="email-simulation-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow: hidden;">
+              <div style="background: #f1f5f9; padding: 0.75rem 1rem; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 0.5rem;">
+                <span style="font-size: 1.2rem;">📧</span>
+                <span style="font-weight: 600; color: #334155; font-size: 0.85rem;">Email Inbox: welcome&#64;ccf.co.zw</span>
+              </div>
+              <div style="padding: 1.5rem; font-size: 0.85rem; line-height: 1.5; color: #334155;">
+                <div style="border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem; margin-bottom: 1rem;">
+                  <strong>Subject:</strong> Welcome to Central Capital Finance - Account Approved!<br>
+                  <strong>To:</strong> {{ personalForm.get('firstName')?.value }} {{ personalForm.get('lastName')?.value }}
+                </div>
+                <p>Dear {{ personalForm.get('firstName')?.value }},</p>
+                <p>We are delighted to confirm that your self-service personal account opening application has been fully approved by compliance.</p>
+                <p>
+                  <strong>Account Details:</strong><br>
+                  • Account Reference: <strong>{{ referenceNumber }}</strong><br>
+                  • Currency Selection: {{ accountForm.get('currency')?.value }}<br>
+                  • Account Type: {{ accountForm.get('accountType')?.value }}
+                </p>
+                <p>You can now use these credentials to open your dashboard. Welcome to the future of banking.</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align: center;">
+            <button type="button" class="btn btn-primary" style="padding: 0.8rem 2.5rem; font-size: 1rem;" (click)="openDashboard()">
+              Open Customer Dashboard
+            </button>
+          </div>
+        </div>
+
+        <!-- Customer Dashboard Screen -->
+        <div *ngIf="showDashboard" class="customer-dashboard-container">
+          <div class="dashboard-header-block" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 2px solid #0076f6; padding-bottom: 1rem;">
+            <div>
+              <h2 style="margin: 0; color: #333;">Customer Portal</h2>
+              <p style="margin: 0.25rem 0 0 0; color: #666; font-size: 0.9rem;">Welcome, <strong>{{ personalForm.get('firstName')?.value }} {{ personalForm.get('lastName')?.value }}</strong></p>
+            </div>
+            <button type="button" class="btn btn-primary" (click)="generatePdfReport()">
+              📄 Generate PDF Report
+            </button>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 1.25rem; border-radius: 8px;">
+              <span style="font-size: 0.85rem; color: #64748b; text-transform: uppercase; font-weight: 600;">Account Balance</span>
+              <div style="font-size: 1.8rem; font-weight: bold; color: #2e7d32; margin-top: 0.5rem;">+$50.00 <span style="font-size: 1rem; font-weight: normal;">{{ accountForm.get('currency')?.value }}</span></div>
+            </div>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 1.25rem; border-radius: 8px;">
+              <span style="font-size: 0.85rem; color: #64748b; text-transform: uppercase; font-weight: 600;">Account Status</span>
+              <div style="font-size: 1.4rem; font-weight: bold; color: #2e7d32; margin-top: 0.5rem; display: flex; align-items: center; gap: 0.25rem;">✔️ ACTIVE</div>
+            </div>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 1.25rem; border-radius: 8px;">
+              <span style="font-size: 0.85rem; color: #64748b; text-transform: uppercase; font-weight: 600;">Reference Code</span>
+              <div style="font-size: 1.2rem; font-weight: bold; color: #0f172a; margin-top: 0.5rem;">{{ referenceNumber }}</div>
+            </div>
+          </div>
+
+          <div class="transaction-history-section" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+            <div style="background: #f1f5f9; padding: 1rem 1.5rem; font-weight: bold; color: #334155; border-bottom: 1px solid #e2e8f0;">
+              📜 Recent Account Transactions
+            </div>
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+              <thead>
+                <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+                  <th style="padding: 1rem 1.5rem; font-size: 0.85rem; color: #64748b; font-weight: 600;">Date</th>
+                  <th style="padding: 1rem 1.5rem; font-size: 0.85rem; color: #64748b; font-weight: 600;">Description</th>
+                  <th style="padding: 1rem 1.5rem; font-size: 0.85rem; color: #64748b; font-weight: 600;">Status</th>
+                  <th style="padding: 1rem 1.5rem; font-size: 0.85rem; color: #64748b; font-weight: 600; text-align: right;">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                  <td style="padding: 1rem 1.5rem; font-size: 0.85rem;">Today</td>
+                  <td style="padding: 1rem 1.5rem; font-size: 0.85rem; font-weight: 500;">Initial Onboarding Welcome Bonus</td>
+                  <td style="padding: 1rem 1.5rem; font-size: 0.85rem; color: #2e7d32; font-weight: 600;">Completed</td>
+                  <td style="padding: 1rem 1.5rem; font-size: 0.85rem; font-weight: bold; color: #2e7d32; text-align: right;">+$50.00</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                  <td style="padding: 1rem 1.5rem; font-size: 0.85rem;">Today</td>
+                  <td style="padding: 1rem 1.5rem; font-size: 0.85rem; font-weight: 500;">Digital Account Activation Levy</td>
+                  <td style="padding: 1rem 1.5rem; font-size: 0.85rem; color: #2e7d32; font-weight: 600;">Completed</td>
+                  <td style="padding: 1rem 1.5rem; font-size: 0.85rem; font-weight: bold; color: #e53935; text-align: right;">-$5.00</td>
+                </tr>
+                <tr>
+                  <td style="padding: 1rem 1.5rem; font-size: 0.85rem;">Today</td>
+                  <td style="padding: 1rem 1.5rem; font-size: 0.85rem; font-weight: 500;">Visa Debit Card Production Fee</td>
+                  <td style="padding: 1rem 1.5rem; font-size: 0.85rem; color: #2e7d32; font-weight: 600;">Completed</td>
+                  <td style="padding: 1rem 1.5rem; font-size: 0.85rem; font-weight: bold; color: #e53935; text-align: right;">-$10.00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="margin-top: 2rem; text-align: center;">
+            <button type="button" class="btn btn-secondary" [routerLink]="['/']">Back to Landing Page</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Stepper Footer controls (Back / Next) -->
+      <footer class="stepper-footer" *ngIf="currentStep <= totalSteps">
+        <!-- Back button: Standard Back (Steps 1 to 5) -->
+        <button type="button" class="btn btn-secondary" (click)="navigateBack()" *ngIf="currentStep !== 6">
+          ← {{ currentStep === 1 ? 'Cancel Onboarding' : 'Back' }}
+        </button>
+        <!-- Back button: Step 6 Custom Back -->
+        <button type="button" class="btn btn-secondary" (click)="goBackInSecurity()" *ngIf="currentStep === 6">
+          ← Back
+        </button>
+
+        <!-- Verify Identity Details replacing Next in Step 1 if not verified -->
+        <button type="button" class="btn btn-primary" [disabled]="isVerifyingIdentity" (click)="verifyIdentity()" *ngIf="currentStep === 1 && !isIdentityVerified">
+          <span class="spinner" *ngIf="isVerifyingIdentity"></span>
+          <span>{{ isVerifyingIdentity ? 'Verifying Registry...' : 'Verify Identity Details' }}</span>
+        </button>
+
+        <!-- Standard Next button for other steps (except Step 1 when unverified, and except Step 6) -->
+        <button type="button" class="btn btn-primary" (click)="navigateNext()" *ngIf="currentStep < totalSteps && currentStep !== 6 && (currentStep !== 1 || isIdentityVerified)">
+          <span>Next</span>
+        </button>
+
+        <!-- Step 6 Custom Controls inside footer -->
+        <ng-container *ngIf="currentStep === 6">
+          <!-- Password Stage Confirm button -->
+          <button type="button" class="btn btn-primary" [disabled]="passwordForm.invalid" (click)="confirmPasswordSetup()" *ngIf="securityStepStage === 'PASSWORD'">
+            <span>Confirm & Continue</span>
+          </button>
+          
+          <!-- Dispatch Stage Send OTP button -->
+          <button type="button" class="btn btn-primary" (click)="sendOtpBySelectedMethod(otpDispatchMethod)" *ngIf="securityStepStage === 'OTP_DISPATCH'">
+            <span>Send Verification OTP</span>
+          </button>
+
+          <!-- Verification Stage Submit button -->
+          <button type="button" class="btn btn-primary" (click)="submitApplication()" [disabled]="isSubmitting || !isOtpVerified" *ngIf="securityStepStage === 'OTP_VERIFICATION'">
+            <span class="spinner" *ngIf="isSubmitting"></span>
+            <span>{{ isSubmitting ? 'Submitting Application...' : 'Submit Onboarding Application' }}</span>
+          </button>
+        </ng-container>
+      </footer>
+    </main>
+  </div>
+</div>
+
+
+<!-- Toast Notification Overlay -->
+<div class="global-toast" *ngIf="showToast" [ngClass]="toastType">
+  <span class="toast-icon">
+    <span *ngIf="toastType === 'success'">✔️</span>
+    <span *ngIf="toastType === 'danger'">❌</span>
+    <span *ngIf="toastType === 'warning'">⚠️</span>
+    <span *ngIf="toastType === 'info'">ℹ️</span>
+  </span>
+  <span class="toast-message">{{ toastMessage }}</span>
+  <button class="toast-close" (click)="closeToast()">&times;</button>
+</div>
+</div>

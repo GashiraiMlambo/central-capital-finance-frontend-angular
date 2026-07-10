@@ -1,0 +1,26 @@
+<div class="recaptcha-widget">
+  <div class="recaptcha-left">
+    <div class="checkbox-container" (click)="verify()">
+      <!-- Checkbox frame -->
+      <div class="recaptcha-checkbox" [class.verifying]="state === 'verifying'" [class.verified]="state === 'verified'">
+        <!-- Spinner -->
+        <div class="spinner-ring" *ngIf="state === 'verifying'"></div>
+        
+        <!-- Green Checkmark -->
+        <svg class="checkmark-svg" *ngIf="state === 'verified'" viewBox="0 0 24 24">
+          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+        </svg>
+      </div>
+    </div>
+    <span class="recaptcha-label" (click)="verify()">i'm not a robot</span>
+  </div>
+
+  <div class="recaptcha-right">
+    <!-- Blue loop arrows logo -->
+    <svg viewBox="0 0 24 24" class="loop-arrows-logo">
+      <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+    </svg>
+    <span class="recaptcha-brand">CAPTCHA</span>
+    <span class="recaptcha-links">Privacy - Terms</span>
+  </div>
+</div>

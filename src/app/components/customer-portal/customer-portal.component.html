@@ -1,0 +1,1043 @@
+<div class="portal-wrapper" [class.dark-theme]="isDarkMode">
+  
+  <!-- BLURRED LANDING PAGE BACKGROUND FOR AUTH STAGES -->
+  <div class="blurred-bg-underlay" *ngIf="portalStage === 'LOGIN' || portalStage === 'OTP'">
+    <header class="landing-header-dummy">
+      <div class="header-container-dummy">
+        <img src="/ccf_white_logo.png" alt="Central Capital Finance Logo" class="brand-logo-dummy" />
+        <div class="nav-links-dummy">
+          <span class="nav-link-dummy" style="margin-right: 1.5rem;">About Us</span>
+          <span class="nav-link-dummy" style="margin-right: 1.5rem;">Support</span>
+          <span class="portal-badge-dummy">Self-Service Onboarding</span>
+        </div>
+      </div>
+    </header>
+    <main class="landing-main-dummy">
+      <div class="hero-layout-dummy">
+        <div class="hero-text-dummy">
+          <h1 class="hero-title-dummy">Welcome to the Future of <span>Digital Banking</span></h1>
+          <p class="hero-description-dummy">
+            Open a premium personal account in minutes with our fully self-service onboarding portal. Secure, fast, and entirely paperless.
+          </p>
+        </div>
+        <div class="cards-grid-dummy">
+          <div class="action-card-dummy">
+            <h3 class="card-title-dummy">New Customer?</h3>
+            <p class="card-desc-dummy">Start a fresh personal onboarding file</p>
+          </div>
+          <div class="action-card-dummy">
+            <h3 class="card-title-dummy">Open Dashboard</h3>
+            <p class="card-desc-dummy">Access your premium customer banking portal</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  
+  <!-- TOAST NOTIFICATIONS -->
+  <div class="global-toast" *ngIf="showToast" [ngClass]="toastType">
+    <span class="toast-icon">
+      <span *ngIf="toastType === 'success'">✔️</span>
+      <span *ngIf="toastType === 'danger'">❌</span>
+      <span *ngIf="toastType === 'warning'">⚠️</span>
+      <span *ngIf="toastType === 'info'">ℹ️</span>
+    </span>
+    <span class="toast-message">{{ toastMessage }}</span>
+    <button class="toast-close" (click)="closeToast()">&times;</button>
+  </div>
+
+  <!-- AUTH SCREEN (LOGIN STAGE) -->
+  <div class="auth-container" *ngIf="portalStage === 'LOGIN'">
+    <div class="auth-card glass-card">
+      <div class="auth-logo-img">
+        <img src="/ccf_white_logo.png" alt="Central Capital Finance Logo" />
+      </div>
+      <h2>Customer Portal Login</h2>
+      <p class="auth-subtitle">Access your digital banking accounts, microfinance portfolio, and remittance tracking.</p>
+
+      <form (submit)="handleLoginSubmit(); $event.preventDefault();" class="auth-form">
+        <div class="form-group">
+          <label>Surname <span class="required">*</span></label>
+          <input 
+            type="text" 
+            [(ngModel)]="loginSurname" 
+            name="surname" 
+            placeholder="e.g. Chimboza" 
+            required 
+            autocomplete="family-name"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Security Password <span class="required">*</span></label>
+          <input 
+            type="password" 
+            [(ngModel)]="loginPassword" 
+            name="password" 
+            placeholder="••••••••" 
+            required
+            autocomplete="current-password"
+          />
+        </div>
+
+        <div class="auth-error" *ngIf="loginError">
+          ⚠️ {{ loginError }}
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">
+          Authenticate & Continue
+        </button>
+
+        <div class="auth-footer">
+          <a [routerLink]="['/']" class="back-link">← Return to Landing Page</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- AUTH SCREEN (OTP VERIFICATION STAGE) -->
+  <div class="auth-container" *ngIf="portalStage === 'OTP'">
+    <div class="auth-card glass-card">
+      <div class="auth-logo-img">
+        <img src="/ccf_white_logo.png" alt="Central Capital Finance Logo" />
+      </div>
+      <h2>Two-Factor OTP Verification</h2>
+      <p class="auth-subtitle">We have dispatched a 6-digit OTP code to the mobile number registered to your profile: <strong>{{ otpPhoneTarget }}</strong>.</p>
+      
+      <form (submit)="handleOtpSubmit(); $event.preventDefault();" class="auth-form" style="text-align: center;">
+        <div class="form-group" style="display: flex; flex-direction: column; align-items: center;">
+          <label style="margin-bottom: 0.75rem;">Enter 6-Digit Code</label>
+          <input 
+            type="text" 
+            [(ngModel)]="otpInput" 
+            name="otp" 
+            placeholder="e.g. 123456" 
+            maxlength="6"
+            style="text-align: center; font-size: 1.5rem; letter-spacing: 5px; width: 100%; max-width: 220px;"
+            required
+          />
+        </div>
+
+        <div class="auth-error" *ngIf="otpError">
+          ❌ {{ otpError }}
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">
+          Verify & Log In
+        </button>
+
+        <div style="margin-top: 1rem; display: flex; justify-content: space-between; font-size: 0.85rem;">
+          <a href="javascript:void(0)" (click)="portalStage = 'LOGIN'" style="color: #64748b; text-decoration: none;">← Back to login</a>
+          <a href="javascript:void(0)" (click)="displayToast('OTP code resent successfully.', 'success')" style="color: #0A58CA; text-decoration: none; font-weight: 500;">Resend OTP Code</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- PORTAL NAVIGATION SHELL & DASHBOARD -->
+  <div class="dashboard-shell" *ngIf="portalStage === 'DASHBOARD'">
+    
+    <!-- TOP NAVIGATION BAR -->
+    <header class="top-navbar">
+      <div class="logo-section">
+        <img src="/ccf_white_logo.png" alt="CCF Logo" class="navbar-logo" />
+      </div>
+
+      <div class="nav-actions">
+        <!-- Theme Toggle -->
+        <button class="icon-nav-btn" (click)="toggleTheme()" title="Toggle Color Theme">
+          <span>{{ isDarkMode ? '☀️' : '🌙' }}</span>
+        </button>
+
+        <!-- Notifications Bell -->
+        <div class="badge-wrapper">
+          <button class="icon-nav-btn" (click)="toggleNotifications()">
+            <span>🔔</span>
+            <span class="badge" *ngIf="unreadNotificationsCount > 0">{{ unreadNotificationsCount }}</span>
+          </button>
+          
+          <!-- Notifications Dropdown -->
+          <div class="nav-dropdown notifications-dropdown" *ngIf="showNotificationsDropdown">
+            <div class="dropdown-header">
+              <span>Notifications</span>
+              <a href="javascript:void(0)" (click)="notificationsList = []" style="font-size: 0.75rem; color: #0A58CA; text-decoration: none;">Clear all</a>
+            </div>
+            <div class="dropdown-body">
+              <div class="empty-notif" *ngIf="notificationsList.length === 0">No new notifications.</div>
+              <div class="notification-item" *ngFor="let notif of notificationsList">
+                <p>{{ notif.text }}</p>
+                <span class="time">{{ notif.time }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="badge-wrapper">
+          <button class="profile-nav-trigger" (click)="toggleProfile()">
+            <div class="avatar-circle">
+              {{ customer.name.charAt(0) }}
+            </div>
+            <span class="profile-name-span">{{ customer.name }}</span>
+            <span style="font-size: 0.7rem;">▼</span>
+          </button>
+
+          <!-- Profile Dropdown Menu -->
+          <div class="nav-dropdown profile-dropdown" *ngIf="showProfileDropdown">
+            <div class="profile-dropdown-header">
+              <strong>{{ customer.name }}</strong>
+              <span>{{ customer.email || 'no-email&#64;ccf.co.zw' }}</span>
+            </div>
+            <div class="profile-dropdown-body">
+              <a href="javascript:void(0)" class="dropdown-link" (click)="displayToast('Security settings are up to date.', 'success')">⚙️ Security Settings</a>
+              <a href="javascript:void(0)" class="dropdown-link" (click)="generatePdfReport()">📄 Account Statement</a>
+              <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 0.5rem 0;">
+              <a href="javascript:void(0)" class="dropdown-link signout-link" (click)="handleLogout()">🚪 Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- SIDEBAR + MAIN CONTENT LAYOUT -->
+    <div class="portal-body-layout">
+
+      <!-- SIDEBAR NAV -->
+      <aside class="portal-sidebar">
+        <div class="sidebar-profile-mini">
+          <div class="avatar-circle sidebar-avatar">{{ customer.name.charAt(0) }}</div>
+          <div class="sidebar-profile-text">
+            <span class="sidebar-name">{{ customer.name }}</span>
+            <span class="sidebar-id">{{ customer.id }}</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <button 
+            class="sidebar-nav-item" 
+            [class.active]="activeView === 'home'"
+            (click)="activeView = 'home'">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Portal Home
+          </button>
+          <button 
+            class="sidebar-nav-item" 
+            [class.active]="activeView === 'exchange'"
+            (click)="activeView = 'exchange'; resetExchange()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            Exchange
+          </button>
+          <button 
+            class="sidebar-nav-item" 
+            [class.active]="activeView === 'transfer'"
+            (click)="activeView = 'transfer'; resetTransfer()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Transfer Money
+          </button>
+          <button 
+            class="sidebar-nav-item" 
+            [class.active]="activeView === 'receive'"
+            (click)="activeView = 'receive'">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            Receive Money
+            <span class="sidebar-badge" *ngIf="incomingTransfers | filterByStatus:'Pending'">{{ incomingTransfers | filterByStatus:'Pending' }}</span>
+          </button>
+          <button 
+            class="sidebar-nav-item" 
+            [class.active]="activeView === 'rates'"
+            (click)="activeView = 'rates'">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Live Rates
+          </button>
+          <button 
+            class="sidebar-nav-item" 
+            [class.active]="activeView === 'transactions'"
+            (click)="activeView = 'transactions'">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+            My Transactions
+          </button>
+        </nav>
+
+        <div class="sidebar-kyc-status" [ngClass]="customer.kycStatus.toLowerCase()">
+          <span class="kyc-dot"></span>
+          KYC: {{ customer.kycStatus }}
+        </div>
+      </aside>
+
+      <!-- MAIN VIEW AREA -->
+      <main class="dashboard-main">
+
+        <!-- ===================== -->
+        <!-- VIEW: PORTAL HOME     -->
+        <!-- ===================== -->
+        <div *ngIf="activeView === 'home'">
+
+          <!-- HERO BANNER -->
+          <section class="hero-banner">
+            <div class="hero-text-content">
+              <h1>Welcome back, {{ customer.name }}</h1>
+              <p>Manage your account holdings, track cross-border money transfers, and calculate real-time exchange rates.</p>
+            </div>
+          </section>
+
+          <!-- SPLIT-PANE GRID LAYOUT -->
+          <div class="split-pane-grid">
+            
+            <!-- LEFT COLUMN (1.2fr) -->
+            <div class="grid-column left-pane">
+              
+              <!-- LIVE BALANCES CARD SECTION -->
+              <div class="dashboard-section-header">
+                <h3>Live Ledger Accounts</h3>
+              </div>
+              
+              <!-- Balance Card 1: Savings -->
+              <div class="card-banking savings-card">
+                <div class="card-header-row">
+                  <span class="acc-product-type">{{ savingsAccount.productType }}</span>
+                  <span class="acc-interest-rate">{{ savingsAccount.interestRate }}% APY</span>
+                </div>
+                <div class="acc-number-row">
+                  Acc: {{ savingsAccount.accountNumber }}
+                </div>
+                <div class="acc-balance-row">
+                  <span class="currency-tag">USD</span>
+                  <span class="balance-amount">{{ savingsAccount.balance | number:'1.2-2' }}</span>
+                </div>
+                <div class="card-footer-row">
+                  <span class="status-indicator active">● Active Holdings</span>
+                </div>
+              </div>
+
+
+
+
+              <!-- KYC DOCUMENT MANAGER -->
+              <div class="dashboard-section-header" style="margin-top: 2rem;">
+                <h3>KYC Document Center</h3>
+              </div>
+              
+              <div class="card-banking glass-card doc-manager-card">
+                <div class="doc-list">
+                  <div class="doc-item" *ngFor="let doc of customer.documents">
+                    <div class="doc-icon">📄</div>
+                    <div class="doc-info">
+                      <span class="doc-name">{{ doc.type }}</span>
+                      <span class="doc-filename">{{ doc.url }}</span>
+                    </div>
+                    <span class="doc-status" [ngClass]="doc.status.toLowerCase()">
+                      {{ doc.status }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Upload Zone simulation -->
+                <div class="upload-simulation-zone">
+                  <div class="upload-select-row">
+                    <select [(ngModel)]="selectedUploadType" class="form-select-inline">
+                      <option value="Passport Scan">Passport Scan</option>
+                      <option value="National ID">National ID</option>
+                      <option value="Utility Bill">Utility Bill</option>
+                      <option value="Proof of Income">Proof of Income</option>
+                    </select>
+                    
+                    <label class="custom-file-upload btn btn-secondary">
+                      <input type="file" (change)="simulateDocUpload($event)" style="display: none;"/>
+                      Upload New File
+                    </label>
+                  </div>
+
+                  <!-- Uploading Bar -->
+                  <div class="upload-progress-container" *ngIf="isUploading">
+                    <div class="progress-bar-label">Uploading... {{ uploadProgress }}%</div>
+                    <div class="progress-bar-track">
+                      <div class="progress-bar-fill" [style.width.%]="uploadProgress"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN (1.8fr) -->
+            <div class="grid-column right-pane">
+              
+              <!-- EXCHANGE RATE & CALCULATOR -->
+              <div class="dashboard-section-header">
+                <h3>Live Currency Converter</h3>
+              </div>
+
+              <div class="card-banking glass-card calculator-card">
+                <div class="calculator-grid">
+                  <div class="calc-input-block">
+                    <label>Send Amount</label>
+                    <div class="currency-input-wrapper">
+                      <span class="currency-prefix">{{ getCurrencySymbol(calcCurrencyPair) }}</span>
+                      <input 
+                        type="number" 
+                        [(ngModel)]="calcSendAmount" 
+                        (ngModelChange)="onCalcChange()" 
+                        min="1"
+                        placeholder="100"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="calc-input-block">
+                    <label>Currency Pair</label>
+                    <select [(ngModel)]="calcCurrencyPair" (change)="onCalcChange()" class="form-select">
+                      <option *ngFor="let rate of exchangeRates" [value]="rate.pair">
+                        {{ rate.pair }} (Live Rate: {{ rate.buyRate | number:'1.2-2' }})
+                      </option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Loading overlay or result -->
+                <div class="calculator-result-container">
+                  <!-- Skeleton Loader -->
+                  <div class="skeleton-loader-wrapper" *ngIf="calcIsLoading">
+                    <div class="skeleton-line" style="width: 70%; height: 16px; margin-bottom: 8px;"></div>
+                    <div class="skeleton-line" style="width: 50%; height: 24px; margin-bottom: 8px;"></div>
+                    <div class="skeleton-line" style="width: 40%; height: 14px;"></div>
+                  </div>
+
+                  <!-- Real result — always shown when not loading, defaults to 100 send amount -->
+                  <div class="real-calc-results" *ngIf="!calcIsLoading">
+                    <div class="conversion-summary-line">
+                      {{ (calcSendAmount || 100) | number:'1.2-2' }} {{ calcCurrencyPair.split('/')[0] }} = 
+                      <strong>{{ ((calcSendAmount || 100) * calcRate) | number:'1.2-2' }} ZWG</strong>
+                    </div>
+                    <div class="breakdown-details">
+                      <div class="breakdown-row">
+                        <span>Active Exchange Rate:</span>
+                        <span>1 {{ calcCurrencyPair.split('/')[0] }} = {{ calcRate | number:'1.2-2' }} ZWG</span>
+                      </div>
+                      <div class="breakdown-row">
+                        <span>Processing Fee (0.5% / Min 10 ZWG):</span>
+                        <span>-{{ calcFee | number:'1.2-2' }} ZWG</span>
+                      </div>
+                      <hr style="border: 0; border-top: 1px solid rgba(0,0,0,0.06); margin: 0.5rem 0;">
+                      <div class="breakdown-row net-payout">
+                        <span>Estimated Net Payout:</span>
+                        <span class="highlight">{{ calcNetPayout | number:'1.2-2' }} ZWG</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- REMITTANCE TRACKING -->
+              <div class="dashboard-section-header" style="margin-top: 2rem;">
+                <h3>Remittance Tracker</h3>
+              </div>
+
+              <div class="card-banking glass-card tracker-card">
+                <p style="font-size: 0.85rem; color: var(--text-color-secondary); margin-bottom: 1rem;">
+                  Enter a 12-digit transaction Reference PIN code to monitor the live dispatch and clearance status of your transfer.
+                </p>
+
+                <form (submit)="trackRemittance(); $event.preventDefault();" class="tracker-input-row">
+                  <input 
+                    type="text" 
+                    [(ngModel)]="trackPin" 
+                    name="pin" 
+                    placeholder="e.g. REM-8893-XWZ" 
+                    class="form-control-inline"
+                    style="flex: 1;"
+                  />
+                  <button type="submit" class="btn-track-primary" [disabled]="trackLoading">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    {{ trackLoading ? 'Searching...' : 'Track Transfer' }}
+                  </button>
+                </form>
+
+                <div class="tracker-error-msg" *ngIf="trackError">
+                  ⚠️ {{ trackError }}
+                </div>
+
+                <!-- Tracking timeline -->
+                <div class="tracking-timeline-container" *ngIf="trackStatus > 0">
+                  <div class="timeline-step" [class.completed]="trackStatus >= 1">
+                    <div class="step-marker">1</div>
+                    <div class="step-details">
+                      <h4>Initiated</h4>
+                      <p>Transfer request registered in system</p>
+                    </div>
+                  </div>
+                  <div class="timeline-step" [class.completed]="trackStatus >= 2">
+                    <div class="step-marker">2</div>
+                    <div class="step-details">
+                      <h4>Cleared</h4>
+                      <p>Source compliance cleared funds</p>
+                    </div>
+                  </div>
+                  <div class="timeline-step" [class.completed]="trackStatus >= 3">
+                    <div class="step-marker">3</div>
+                    <div class="step-details">
+                      <h4>Dispatched</h4>
+                      <p>Funds routed to local agent network</p>
+                    </div>
+                  </div>
+                  <div class="timeline-step" [class.completed]="trackStatus >= 4">
+                    <div class="step-marker">4</div>
+                    <div class="step-details">
+                      <h4>Paid Out</h4>
+                      <p>Receiver collected cash successfully</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- RECENT TRANSACTIONS (home preview — 5 rows) -->
+              <div class="dashboard-section-header" style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center;">
+                <h3>Recent Transactions</h3>
+                <button type="button" class="btn-view-all" (click)="activeView = 'transactions'">
+                  View All →
+                </button>
+              </div>
+
+              <div class="card-banking glass-card ledger-card">
+                <div class="table-responsive">
+                  <table class="ledger-table">
+                    <thead>
+                      <tr>
+                        <th>Voucher ID</th>
+                        <th>Type</th>
+                        <th>Sent</th>
+                        <th>Payout (ZWG)</th>
+                        <th>Rate</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let txn of transactions.slice(0, 5)">
+                        <td class="voucher-id">{{ txn.id }}</td>
+                        <td>
+                          <span class="txn-type-cell">
+                            <!-- Exchange icon: two circular arrows -->
+                            <svg *ngIf="txn.type === 'Exchange'" class="txn-icon exchange-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                              <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+                            </svg>
+                            <!-- Remittance icon: paper plane -->
+                            <svg *ngIf="txn.type === 'Remittance'" class="txn-icon remittance-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                              <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                            </svg>
+                            {{ txn.type }}
+                          </span>
+                        </td>
+                        <td>{{ getCurrencySymbol(txn.currencyPair) }}{{ txn.amount | number:'1.2-2' }}</td>
+                        <td class="local-amount">{{ txn.amountLocal | number:'1.2-2' }}</td>
+                        <td>{{ txn.rate }}</td>
+                        <td>
+                          <span class="status-chip" [ngClass]="txn.status.toLowerCase()">
+                            {{ txn.status }}
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="ledger-footer-actions">
+                  <button class="btn btn-link" (click)="activeView = 'transactions'">
+                    View full transaction history ({{ transactions.length }} records) →
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+        <!-- END HOME VIEW -->
+
+
+        <!-- ========================= -->
+        <!-- VIEW: MY TRANSACTIONS     -->
+        <!-- ========================= -->
+        <div *ngIf="activeView === 'transactions'" class="transactions-view">
+          <div class="transactions-view-header">
+            <div>
+              <h2>Transaction History</h2>
+              <p>Complete ledger of all your exchange and remittance transactions.</p>
+            </div>
+            <div class="txn-header-actions">
+              <button type="button" class="btn btn-secondary btn-sm" (click)="generatePdfReport()">
+                📄 Export PDF
+              </button>
+            </div>
+          </div>
+
+          <!-- Filter Bar -->
+          <div class="txn-filter-bar">
+            <div class="txn-filter-stats">
+              <span class="stat-pill total">{{ transactions.length }} Total</span>
+              <span class="stat-pill exchange">{{ transactions | filterByType:'Exchange' }} Exchange</span>
+              <span class="stat-pill remittance">{{ transactions | filterByType:'Remittance' }} Remittance</span>
+            </div>
+          </div>
+
+          <div class="card-banking glass-card ledger-card">
+            <div class="table-responsive">
+              <table class="ledger-table">
+                <thead>
+                  <tr>
+                    <th>Voucher ID</th>
+                    <th>Type</th>
+                    <th>Sent Amount</th>
+                    <th>Payout (ZWG)</th>
+                    <th>Rate</th>
+                    <th>Fees</th>
+                    <th>Timestamp</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let txn of transactions">
+                    <td class="voucher-id">{{ txn.id }}</td>
+                    <td>
+                      <span class="txn-type-cell">
+                        <svg *ngIf="txn.type === 'Exchange'" class="txn-icon exchange-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                          <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+                        </svg>
+                        <svg *ngIf="txn.type === 'Remittance'" class="txn-icon remittance-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                          <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                        </svg>
+                        {{ txn.type }}
+                      </span>
+                    </td>
+                    <td>{{ getCurrencySymbol(txn.currencyPair) }}{{ txn.amount | number:'1.2-2' }}</td>
+                    <td class="local-amount">{{ txn.amountLocal | number:'1.2-2' }}</td>
+                    <td>{{ txn.rate }}</td>
+                    <td>{{ txn.fee | number:'1.2-2' }}</td>
+                    <td class="date-col">{{ txn.timestamp }}</td>
+                    <td>
+                      <span class="status-chip" [ngClass]="txn.status.toLowerCase()">
+                        {{ txn.status }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!-- END TRANSACTIONS VIEW -->
+
+        <!-- ========================= -->
+        <!-- VIEW: EXCHANGE            -->
+        <!-- ========================= -->
+        <div *ngIf="activeView === 'exchange'" class="module-view">
+          <div class="module-view-header">
+            <div>
+              <h2>Currency Exchange</h2>
+              <p>Buy or sell between USD, ZAR and ZWG at live interbank rates.</p>
+            </div>
+          </div>
+
+          <!-- Receipt screen after confirmed exchange -->
+          <div class="receipt-card glass-card" *ngIf="exConfirmed">
+            <div class="receipt-icon success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="36" height="36"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h3>{{ exPaymentMethod === 'online' ? 'Exchange Completed!' : 'Exchange Booked — Branch Visit Required' }}</h3>
+            <p class="receipt-sub" *ngIf="exPaymentMethod === 'online'">Your converted funds have been credited to your wallet.</p>
+            <p class="receipt-sub" *ngIf="exPaymentMethod === 'cash'">Please visit any CCF branch with your receipt ID to hand over cash and complete the transaction.</p>
+            <div class="receipt-detail-row"><span>Receipt ID</span><strong>{{ exReceiptId }}</strong></div>
+            <div class="receipt-detail-row"><span>You Sent</span><strong>{{ exAmount | number:'1.2-2' }} {{ exFromCurrency }}</strong></div>
+            <div class="receipt-detail-row"><span>You Receive</span><strong>{{ exResult?.net | number:'1.2-2' }} {{ exToCurrency }}</strong></div>
+            <div class="receipt-detail-row"><span>Payment Method</span><strong>{{ exPaymentMethod === 'online' ? 'Online (Wallet)' : 'Cash at Branch' }}</strong></div>
+            <button class="btn-track-primary" style="margin-top:1.5rem; width:100%; justify-content:center;" (click)="resetExchange()">
+              New Exchange
+            </button>
+          </div>
+
+          <!-- Exchange form -->
+          <div class="exchange-form-card glass-card" *ngIf="!exConfirmed">
+            <!-- Currency selector row -->
+            <div class="ex-currency-row">
+              <div class="ex-currency-block">
+                <label>From</label>
+                <select [(ngModel)]="exFromCurrency" (change)="exResult = null" class="form-select ex-select">
+                  <option value="USD">USD — US Dollar</option>
+                  <option value="ZAR">ZAR — South African Rand</option>
+                  <option value="ZWG">ZWG — Zimbabwe Gold</option>
+                </select>
+              </div>
+
+              <button class="swap-btn" (click)="swapExCurrencies()" title="Swap currencies">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+              </button>
+
+              <div class="ex-currency-block">
+                <label>To</label>
+                <select [(ngModel)]="exToCurrency" (change)="exResult = null" class="form-select ex-select">
+                  <option value="USD">USD — US Dollar</option>
+                  <option value="ZAR">ZAR — South African Rand</option>
+                  <option value="ZWG">ZWG — Zimbabwe Gold</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Amount input -->
+            <div class="ex-amount-block">
+              <label>Amount to Exchange</label>
+              <div class="currency-input-wrapper">
+                <span class="currency-prefix">{{ exFromCurrency }}</span>
+                <input type="number" [(ngModel)]="exAmount" (ngModelChange)="exResult = null" min="1" placeholder="100" class="ex-amount-input"/>
+              </div>
+            </div>
+
+            <!-- Live rate hint -->
+            <div class="rate-hint-row" *ngIf="exFromCurrency !== exToCurrency">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#0A58CA" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Live rate: 1 {{ exFromCurrency }} = {{ exComputedRate | number:'1.4-4' }} {{ exToCurrency }}
+            </div>
+
+            <!-- Payment method -->
+            <div class="payment-method-section" style="margin-top: 1rem;">
+              <label class="section-label">Payment Method</label>
+              <div class="payment-method-grid">
+                <div class="payment-option" [class.selected]="exPaymentMethod === 'online'" (click)="exPaymentMethod = 'online'">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                  <div class="payment-option-text">
+                    <strong>Online Payment</strong>
+                    <span>Deduct from Savings Account</span>
+                  </div>
+                  <div class="radio-dot" [class.active]="exPaymentMethod === 'online'"></div>
+                </div>
+                <div class="payment-option" [class.selected]="exPaymentMethod === 'cash'" (click)="exPaymentMethod = 'cash'">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
+                  <div class="payment-option-text">
+                    <strong>Cash at Branch</strong>
+                    <span>Visit branch with cash to complete</span>
+                  </div>
+                  <div class="radio-dot" [class.active]="exPaymentMethod === 'cash'"></div>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- Preview / loading / result -->
+            <button class="btn-track-primary" style="width:100%; justify-content:center; margin-top:1rem;"
+              (click)="previewExchange()" *ngIf="!exResult && !exIsLoading">
+              Preview Exchange
+            </button>
+
+            <div class="skeleton-loader-wrapper" *ngIf="exIsLoading" style="margin-top:1rem;">
+              <div class="skeleton-line" style="width:80%; height:16px; margin-bottom:8px;"></div>
+              <div class="skeleton-line" style="width:60%; height:22px; margin-bottom:8px;"></div>
+              <div class="skeleton-line" style="width:45%; height:14px;"></div>
+            </div>
+
+            <div class="ex-result-panel" *ngIf="exResult && !exIsLoading">
+              <div class="ex-result-headline">
+                {{ exAmount | number:'1.2-2' }} {{ exFromCurrency }}
+                <svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" width="16" height="16"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                <strong>{{ exResult.net | number:'1.2-2' }} {{ exToCurrency }}</strong>
+              </div>
+              <div class="ex-breakdown">
+                <div class="breakdown-row"><span>Rate</span><span>1 {{ exFromCurrency }} = {{ exResult.rate | number:'1.4-4' }} {{ exToCurrency }}</span></div>
+                <div class="breakdown-row"><span>Gross Amount</span><span>{{ exResult.convertedAmount | number:'1.2-2' }} {{ exToCurrency }}</span></div>
+                <div class="breakdown-row"><span>Service Fee (0.5%)</span><span>− {{ exResult.fee | number:'1.2-2' }} {{ exToCurrency }}</span></div>
+                <hr style="border:0; border-top:1px solid #e2e8f0; margin:.5rem 0;">
+                <div class="breakdown-row net-payout"><span>You Receive</span><span class="highlight">{{ exResult.net | number:'1.2-2' }} {{ exToCurrency }}</span></div>
+              </div>
+              <div class="ex-action-row">
+                <button class="btn btn-secondary" (click)="exResult = null">Edit</button>
+                <button class="btn-track-primary" (click)="confirmExchange()" [disabled]="exIsLoading">
+                  {{ exIsLoading ? 'Processing...' : 'Confirm Exchange' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- END EXCHANGE VIEW -->
+
+
+        <!-- ========================= -->
+        <!-- VIEW: TRANSFER MONEY      -->
+        <!-- ========================= -->
+        <div *ngIf="activeView === 'transfer'" class="module-view">
+          <div class="module-view-header">
+            <div>
+              <h2>Transfer Money</h2>
+              <p>Send funds to any registered CCF customer instantly or via branch.</p>
+            </div>
+          </div>
+
+          <!-- Receipt after confirmed transfer -->
+          <div class="receipt-card glass-card" *ngIf="transferConfirmed">
+            <div class="receipt-icon" [class.success]="transferPaymentMethod === 'online'" [class.pending]="transferPaymentMethod === 'cash'">
+              <svg *ngIf="transferPaymentMethod === 'online'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="36" height="36"><polyline points="20 6 9 17 4 12"/></svg>
+              <svg *ngIf="transferPaymentMethod === 'cash'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="36" height="36"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            </div>
+            <h3>{{ transferPaymentMethod === 'online' ? 'Transfer Sent!' : 'Transfer Booked — Branch Visit Required' }}</h3>
+            <p class="receipt-sub" *ngIf="transferPaymentMethod === 'online'">Funds have been deducted from your wallet and sent to the recipient.</p>
+            <p class="receipt-sub" *ngIf="transferPaymentMethod === 'cash'">Visit any CCF branch with your reference ID to hand over the cash.</p>
+            <div class="receipt-detail-row"><span>Reference</span><strong>{{ transferReceiptId }}</strong></div>
+            <div class="receipt-detail-row"><span>Recipient</span><strong>{{ transferRecipientId }}</strong></div>
+            <div class="receipt-detail-row"><span>Amount</span><strong>{{ transferAmount | number:'1.2-2' }} {{ transferCurrency }}</strong></div>
+            <div class="receipt-detail-row" *ngIf="transferNote"><span>Note</span><strong>{{ transferNote }}</strong></div>
+            <div class="receipt-detail-row"><span>Method</span><strong>Cash at Branch</strong></div>
+            
+            <!-- Screenshot/Copy Options -->
+            <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem; margin-bottom: 0.5rem;">
+              <button class="btn btn-secondary" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem; font-size: 0.8rem; padding: 0.5rem;" (click)="copyToClipboard(transferReceiptId)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copy Code
+              </button>
+              <button class="btn btn-secondary" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem; font-size: 0.8rem; padding: 0.5rem;" (click)="downloadReceipt('Transfer', transferReceiptId, transferAmount, transferCurrency, transferRecipientId)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Save Details
+              </button>
+            </div>
+
+            <button class="btn-track-primary" style="margin-top:0.5rem; width:100%; justify-content:center;" (click)="resetTransfer()">
+              New Transfer
+            </button>
+          </div>
+
+          <!-- Transfer form -->
+          <div class="exchange-form-card glass-card" *ngIf="!transferConfirmed">
+            <div class="form-group-row">
+              <div class="form-group">
+                <label>Recipient ID / Phone Number</label>
+                <input type="text" [(ngModel)]="transferRecipientId" placeholder="e.g. CCF-2026-1234 or +263 77…" class="form-input-modern"/>
+              </div>
+            </div>
+
+            <div class="form-group-row two-col">
+              <div class="form-group">
+                <label>Amount</label>
+                <input type="number" [(ngModel)]="transferAmount" placeholder="0.00" min="1" class="form-input-modern"/>
+              </div>
+              <div class="form-group">
+                <label>Currency</label>
+                <select [(ngModel)]="transferCurrency" class="form-select">
+                  <option value="USD">USD — US Dollar</option>
+                  <option value="ZAR">ZAR — South African Rand</option>
+                  <option value="ZWG">ZWG — Zimbabwe Gold</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Note / Reference (optional)</label>
+              <input type="text" [(ngModel)]="transferNote" placeholder="e.g. School fees, Salary…" class="form-input-modern"/>
+            </div>
+
+
+            <div class="auth-error" *ngIf="transferError">⚠️ {{ transferError }}</div>
+
+            <button class="btn-track-primary" style="width:100%; justify-content:center; margin-top:1.25rem;"
+              (click)="submitTransfer()" [disabled]="transferIsLoading">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              {{ transferIsLoading ? 'Processing...' : 'Send Transfer' }}
+            </button>
+          </div>
+        </div>
+        <!-- END TRANSFER VIEW -->
+
+
+        <!-- ========================= -->
+        <!-- VIEW: RECEIVE MONEY       -->
+        <!-- ========================= -->
+        <div *ngIf="activeView === 'receive'" class="module-view">
+          <div class="module-view-header">
+            <div>
+              <h2>Receive Money</h2>
+              <p>Accept or decline incoming transfers sent to your CCF account.</p>
+            </div>
+          </div>
+
+          <!-- Your receive ID -->
+          <div class="receive-id-card glass-card">
+            <div class="receive-id-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div>
+              <span class="receive-id-label">Your Receive ID</span>
+              <strong class="receive-id-value">{{ customer.id }}</strong>
+              <span class="receive-id-hint">Share this ID so others can send money to you</span>
+            </div>
+          </div>
+
+          <!-- Incoming transfers list -->
+          <div class="incoming-list">
+            <div class="incoming-empty" *ngIf="incomingTransfers.length === 0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" width="48" height="48"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <p>No incoming transfers at the moment.</p>
+            </div>
+
+            <div class="incoming-card glass-card" *ngFor="let tfr of incomingTransfers">
+              <div class="incoming-sender">
+                <div class="sender-avatar">{{ tfr.senderName.charAt(0) }}</div>
+                <div class="sender-info">
+                  <strong>{{ tfr.senderName }}</strong>
+                  <span>{{ tfr.senderPhone }}</span>
+                  <span class="incoming-time">{{ tfr.timestamp }}</span>
+                </div>
+              </div>
+              <div class="incoming-amount">
+                <span class="incoming-amount-val">{{ tfr.amount | number:'1.2-2' }}</span>
+                <span class="incoming-currency-tag">{{ tfr.currency }}</span>
+              </div>
+              <div class="incoming-note" *ngIf="tfr.note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" width="13" height="13"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                {{ tfr.note }}
+              </div>
+
+              <!-- Voucher details directly displayed (no booking required) -->
+              <div class="booked-voucher-details" style="margin-top: 0.75rem; border-top: 1px dashed var(--card-border); padding-top: 0.75rem; width: 100%;">
+                <div style="font-size: 0.8rem; margin-bottom: 0.4rem; color: var(--text-color-secondary);">
+                  Voucher ID: <strong style="font-family: monospace; font-size: 0.95rem; color: var(--text-color); margin-left: 0.25rem;">{{ tfr.id }}</strong>
+                </div>
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                  <button class="btn btn-secondary" style="padding: 0.35rem 0.6rem; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.25rem;" (click)="copyToClipboard(tfr.id)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    Copy Code
+                  </button>
+                  <button class="btn btn-secondary" style="padding: 0.35rem 0.6rem; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.25rem;" (click)="downloadReceipt('Receive', tfr.id, tfr.amount, tfr.currency, tfr.senderName)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Save Voucher
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- END RECEIVE VIEW -->
+
+
+        <!-- ========================= -->
+        <!-- VIEW: LIVE RATES          -->
+        <!-- ========================= -->
+        <div *ngIf="activeView === 'rates'" class="module-view">
+          <div class="module-view-header">
+            <div>
+              <h2>Live Exchange Rates</h2>
+              <p>Official CCF interbank rates updated in real time.</p>
+            </div>
+            <span class="live-rates-badge">
+              <span class="live-dot"></span> Live
+            </span>
+          </div>
+
+          <!-- Rate cards -->
+          <div class="rates-cards-grid">
+            <!-- USD/ZWG -->
+            <div class="rate-card glass-card">
+              <div class="rate-card-pair">
+                <div class="currency-flags">
+                  <span class="flag">🇺🇸</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" width="16" height="16"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  <span class="flag">🇿🇼</span>
+                </div>
+                <div class="pair-label">USD / ZWG</div>
+                <div class="pair-description">US Dollar → Zimbabwe Gold</div>
+              </div>
+              <div class="rate-figures">
+                <div class="rate-figure-row">
+                  <span class="rate-label">Buy Rate</span>
+                  <span class="rate-buy">25.00</span>
+                </div>
+                <div class="rate-figure-row">
+                  <span class="rate-label">Sell Rate</span>
+                  <span class="rate-sell">26.00</span>
+                </div>
+                <div class="rate-figure-row">
+                  <span class="rate-label">Spread</span>
+                  <span class="rate-spread">1.00</span>
+                </div>
+              </div>
+              <button class="btn-rate-exchange" (click)="exFromCurrency = 'USD'; exToCurrency = 'ZWG'; activeView = 'exchange'; resetExchange()">
+                Exchange Now →
+              </button>
+            </div>
+
+            <!-- ZAR/ZWG -->
+            <div class="rate-card glass-card">
+              <div class="rate-card-pair">
+                <div class="currency-flags">
+                  <span class="flag">🇿🇦</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" width="16" height="16"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  <span class="flag">🇿🇼</span>
+                </div>
+                <div class="pair-label">ZAR / ZWG</div>
+                <div class="pair-description">South African Rand → Zimbabwe Gold</div>
+              </div>
+              <div class="rate-figures">
+                <div class="rate-figure-row">
+                  <span class="rate-label">Buy Rate</span>
+                  <span class="rate-buy">1.40</span>
+                </div>
+                <div class="rate-figure-row">
+                  <span class="rate-label">Sell Rate</span>
+                  <span class="rate-sell">1.50</span>
+                </div>
+                <div class="rate-figure-row">
+                  <span class="rate-label">Spread</span>
+                  <span class="rate-spread">0.10</span>
+                </div>
+              </div>
+              <button class="btn-rate-exchange" (click)="exFromCurrency = 'ZAR'; exToCurrency = 'ZWG'; activeView = 'exchange'; resetExchange()">
+                Exchange Now →
+              </button>
+            </div>
+
+            <!-- USD/ZAR -->
+            <div class="rate-card glass-card">
+              <div class="rate-card-pair">
+                <div class="currency-flags">
+                  <span class="flag">🇺🇸</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" width="16" height="16"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  <span class="flag">🇿🇦</span>
+                </div>
+                <div class="pair-label">USD / ZAR</div>
+                <div class="pair-description">US Dollar → South African Rand</div>
+              </div>
+              <div class="rate-figures">
+                <div class="rate-figure-row">
+                  <span class="rate-label">Implied Rate</span>
+                  <span class="rate-buy">{{ (25.00 / 1.40) | number:'1.2-2' }}</span>
+                </div>
+                <div class="rate-figure-row">
+                  <span class="rate-label">Inverse</span>
+                  <span class="rate-sell">{{ (1.40 / 25.00) | number:'1.4-4' }}</span>
+                </div>
+              </div>
+              <button class="btn-rate-exchange" (click)="exFromCurrency = 'USD'; exToCurrency = 'ZAR'; activeView = 'exchange'; resetExchange()">
+                Exchange Now →
+              </button>
+            </div>
+          </div>
+
+          <!-- Rate table -->
+          <div class="card-banking glass-card" style="margin-top:2rem;">
+            <table class="ledger-table">
+              <thead>
+                <tr>
+                  <th>Pair</th><th>Buy Rate</th><th>Sell Rate</th><th>Spread</th><th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let r of exchangeRates">
+                  <td><strong>{{ r.pair }}</strong></td>
+                  <td class="rate-buy">{{ r.buyRate | number:'1.2-2' }}</td>
+                  <td class="rate-sell">{{ r.sellRate | number:'1.2-2' }}</td>
+                  <td>{{ r.spread | number:'1.2-2' }}</td>
+                  <td><span class="status-chip completed">{{ r.status }}</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- END RATES VIEW -->
+
+      </main>
+    </div>
+    <!-- END PORTAL BODY LAYOUT -->
+
+  </div>
+</div>
