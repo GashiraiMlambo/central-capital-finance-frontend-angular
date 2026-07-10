@@ -90,6 +90,11 @@ export class CustomerPortalComponent implements OnInit {
   // Dashboard view routing (sidebar nav)
   activeView: 'home' | 'transactions' | 'exchange' | 'transfer' | 'receive' | 'rates' = 'home';
 
+  // Mobile responsive sidebar
+  isMobileSidebarOpen = false;
+  toggleMobileSidebar(): void { this.isMobileSidebarOpen = !this.isMobileSidebarOpen; }
+  closeMobileSidebar(): void { this.isMobileSidebarOpen = false; }
+
   // Dashboard details
   showFullHistory = false;
   showNotificationsDropdown = false;

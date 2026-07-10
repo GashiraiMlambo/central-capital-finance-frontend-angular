@@ -2215,3 +2215,421 @@
   .ex-currency-row { flex-direction: column; }
   .form-group-row.two-col { grid-template-columns: 1fr; }
 }
+
+/* ============================================================
+   COMPREHENSIVE RESPONSIVE DESIGN — CUSTOMER PORTAL
+   Breakpoints: 992px (tablet), 768px (mobile L), 576px (mobile), 400px (small)
+   ============================================================ */
+
+/* --- LAYOUT FOUNDATION --- */
+.portal-body-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.portal-sidebar {
+  width: 240px;
+  min-width: 240px;
+  background: var(--navbar-bg);
+  border-right: 1px solid var(--navbar-border);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 0;
+  gap: 0.25rem;
+  overflow-y: auto;
+  flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Sidebar profile mini */
+.sidebar-profile-mini {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1rem 1.25rem 1rem;
+  border-bottom: 1px solid var(--card-border);
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-avatar {
+  width: 36px;
+  height: 36px;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.sidebar-profile-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  overflow: hidden;
+}
+
+.sidebar-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-color);
+}
+
+.sidebar-id {
+  font-size: 0.72rem;
+  color: var(--text-color-secondary);
+}
+
+/* Sidebar nav items */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0 0.75rem;
+  flex: 1;
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-color-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: all 0.18s ease;
+  position: relative;
+}
+
+.sidebar-nav-item:hover {
+  background: rgba(10, 88, 202, 0.08);
+  color: #0A58CA;
+}
+
+.sidebar-nav-item.active {
+  background: rgba(10, 88, 202, 0.12);
+  color: #0A58CA;
+  font-weight: 700;
+}
+
+.sidebar-badge {
+  margin-left: auto;
+  background: #ef4444;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 0.1rem 0.4rem;
+  min-width: 18px;
+  text-align: center;
+}
+
+.sidebar-kyc-status {
+  margin: auto 1rem 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.04);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-kyc-status.verified { color: #4ade80; }
+.sidebar-kyc-status.pending  { color: #fbbf24; }
+.sidebar-kyc-status.flagged,
+.sidebar-kyc-status.expired  { color: #f87171; }
+
+/* Hamburger button — hidden on desktop */
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  background: var(--btn-secondary-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.hamburger-btn span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--text-color);
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+/* Mobile overlay backdrop */
+.mobile-sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 200;
+  backdrop-filter: blur(2px);
+}
+
+/* --- TABLET (≤ 992px) --- */
+@media (max-width: 992px) {
+  .split-pane-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .top-navbar {
+    padding: 0 1rem;
+  }
+
+  .profile-name-span {
+    display: none;
+  }
+
+  .hero-text-content h1 {
+    font-size: 1.4rem;
+  }
+}
+
+/* --- MOBILE LARGE (≤ 768px) --- */
+@media (max-width: 768px) {
+  /* Show hamburger, hide sidebar by default */
+  .hamburger-btn {
+    display: flex;
+  }
+
+  .mobile-sidebar-overlay {
+    display: block;
+  }
+
+  /* Sidebar becomes a fixed drawer */
+  .portal-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 272px;
+    z-index: 300;
+    transform: translateX(-100%);
+    padding-top: 1.5rem;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.18);
+  }
+
+  .portal-sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  /* Main content fills full width */
+  .dashboard-main {
+    padding: 1rem;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Hero banner stacks vertically */
+  .hero-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.25rem;
+    gap: 1rem;
+  }
+
+  .hero-text-content h1 {
+    font-size: 1.3rem;
+  }
+
+  /* Grids stack */
+  .split-pane-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .calculator-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rates-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .payment-method-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ex-currency-row {
+    flex-direction: column;
+  }
+
+  .form-group-row.two-col {
+    grid-template-columns: 1fr;
+  }
+
+  /* Module views full width */
+  .module-view {
+    padding: 0;
+  }
+
+  .exchange-form-card,
+  .receipt-card,
+  .receive-id-card,
+  .incoming-card {
+    padding: 1.25rem;
+  }
+
+  /* Toast: full width on mobile */
+  .global-toast {
+    top: auto;
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+    min-width: unset;
+    max-width: 100%;
+    width: calc(100% - 2rem);
+  }
+
+  /* Auth card full width */
+  .auth-card {
+    padding: 1.75rem 1.25rem;
+  }
+
+  /* Navbar height */
+  .top-navbar {
+    height: 60px;
+    padding: 0 1rem;
+  }
+
+  /* Navbar logo smaller */
+  .navbar-logo {
+    height: 36px;
+  }
+
+  /* Transaction ledger scrollable */
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ledger-table {
+    min-width: 600px;
+  }
+
+  /* Tracker input row */
+  .tracker-input-row {
+    flex-direction: column;
+  }
+
+  /* Incoming transfers card */
+  .incoming-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .incoming-amount {
+    align-self: flex-start;
+  }
+
+  /* Balance card balances smaller */
+  .balance-amount {
+    font-size: 1.6rem;
+  }
+
+  /* Receipt detail rows */
+  .receipt-detail-row {
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  /* Quick action cards grid */
+  .quick-actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* --- MOBILE SMALL (≤ 576px) --- */
+@media (max-width: 576px) {
+  .dashboard-main {
+    padding: 0.75rem;
+  }
+
+  .hero-banner {
+    padding: 1rem;
+  }
+
+  .hero-text-content h1 {
+    font-size: 1.15rem;
+  }
+
+  .balance-amount {
+    font-size: 1.4rem;
+  }
+
+  .card-banking {
+    padding: 1.1rem;
+  }
+
+  /* Auth card */
+  .auth-card {
+    padding: 1.5rem 1rem;
+  }
+
+  /* Exchange form card */
+  .exchange-form-card,
+  .receipt-card {
+    padding: 1rem;
+  }
+
+  /* Quick actions: single column */
+  .quick-actions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Notifications/profile dropdowns full width */
+  .nav-dropdown,
+  .notifications-dropdown {
+    width: calc(100vw - 2rem);
+    right: -0.5rem;
+  }
+}
+
+/* --- EXTRA SMALL (≤ 400px) --- */
+@media (max-width: 400px) {
+  .top-navbar {
+    height: 56px;
+  }
+
+  .sidebar-name {
+    font-size: 0.8rem;
+  }
+
+  .sidebar-nav-item {
+    font-size: 0.82rem;
+    padding: 0.6rem 0.75rem;
+  }
+
+  .navbar-logo {
+    height: 30px;
+  }
+
+  .hero-text-content h1 {
+    font-size: 1.05rem;
+  }
+
+  .balance-amount {
+    font-size: 1.25rem;
+  }
+}
