@@ -15,19 +15,19 @@
     <main class="landing-main-dummy">
       <div class="hero-layout-dummy">
         <div class="hero-text-dummy">
-          <h1 class="hero-title-dummy">Welcome to the Future of <span>Digital Banking</span></h1>
+          <h1 class="hero-title-dummy">Foreign Exchange & Remittances <span>Made Convenient</span></h1>
           <p class="hero-description-dummy">
-            Open a premium personal account in minutes with our fully self-service onboarding portal. Secure, fast, and entirely paperless.
+            Register a premium exchange & remittance profile in minutes with our fully self-service portal. Secure, fast, and entirely paperless.
           </p>
         </div>
         <div class="cards-grid-dummy">
           <div class="action-card-dummy">
-            <h3 class="card-title-dummy">New Customer?</h3>
-            <p class="card-desc-dummy">Start a fresh personal onboarding file</p>
+            <h3 class="card-title-dummy">New Profile?</h3>
+            <p class="card-desc-dummy">Start a fresh profile registration</p>
           </div>
           <div class="action-card-dummy">
             <h3 class="card-title-dummy">Open Dashboard</h3>
-            <p class="card-desc-dummy">Access your premium customer banking portal</p>
+            <p class="card-desc-dummy">Access your premium exchange & remittance portal</p>
           </div>
         </div>
       </div>
@@ -53,7 +53,7 @@
         <img src="/ccf_white_logo.png" alt="Central Capital Finance Logo" />
       </div>
       <h2>Customer Portal Login</h2>
-      <p class="auth-subtitle">Access your digital banking accounts, microfinance portfolio, and remittance tracking.</p>
+      <p class="auth-subtitle">Access your foreign exchange wallet, live currency rates, and remittance tracking.</p>
 
       <form (submit)="handleLoginSubmit(); $event.preventDefault();" class="auth-form">
         <div class="form-group">
@@ -297,24 +297,24 @@
               
               <!-- LIVE BALANCES CARD SECTION -->
               <div class="dashboard-section-header">
-                <h3>Live Ledger Accounts</h3>
+                <h3>Active Wallets</h3>
               </div>
               
               <!-- Balance Card 1: Savings -->
               <div class="card-banking savings-card">
                 <div class="card-header-row">
                   <span class="acc-product-type">{{ savingsAccount.productType }}</span>
-                  <span class="acc-interest-rate">{{ savingsAccount.interestRate }}% APY</span>
+                  <span class="acc-interest-rate">Max Daily Limit: $5,000</span>
                 </div>
                 <div class="acc-number-row">
-                  Acc: {{ savingsAccount.accountNumber }}
+                  Wallet ID: {{ savingsAccount.accountNumber }}
                 </div>
                 <div class="acc-balance-row">
                   <span class="currency-tag">USD</span>
                   <span class="balance-amount">{{ savingsAccount.balance | number:'1.2-2' }}</span>
                 </div>
                 <div class="card-footer-row">
-                  <span class="status-indicator active">● Active Holdings</span>
+                  <span class="status-indicator active">● Active Wallet</span>
                 </div>
               </div>
 
@@ -711,15 +711,15 @@
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
                   <div class="payment-option-text">
                     <strong>Online Payment</strong>
-                    <span>Deduct from Savings Account</span>
+                    <span>Deduct from Exchange Wallet</span>
                   </div>
                   <div class="radio-dot" [class.active]="exPaymentMethod === 'online'"></div>
                 </div>
                 <div class="payment-option" [class.selected]="exPaymentMethod === 'cash'" (click)="exPaymentMethod = 'cash'">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
                   <div class="payment-option-text">
-                    <strong>Cash at Branch</strong>
-                    <span>Visit branch with cash to complete</span>
+                    <strong>Cash at Payout Agent</strong>
+                    <span>Visit payout agent to complete</span>
                   </div>
                   <div class="radio-dot" [class.active]="exPaymentMethod === 'cash'"></div>
                 </div>

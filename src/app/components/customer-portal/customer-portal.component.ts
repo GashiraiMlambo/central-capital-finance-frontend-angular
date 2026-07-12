@@ -30,11 +30,11 @@ export interface Transaction {
   amountLocal: number;
   rate: number;
   fee: number;
-  payoutMethod: 'Cash' | 'EcoCash' | 'Bank Transfer' | 'ZIPIT' | 'Mobile Wallet' | 'Online' | 'Cash (Branch)' | 'Wallet Credit' | 'Online (Savings)';
+  payoutMethod: 'Cash' | 'EcoCash' | 'Bank Transfer' | 'ZIPIT' | 'Mobile Wallet' | 'Online' | 'Cash (Branch)' | 'Cash (Agent)' | 'Wallet Credit' | 'Online (Savings)' | 'Online (Wallet)';
   recipientName?: string;
   recipientPhone?: string;
   payoutPin?: string;
-  status: 'Completed' | 'Pending' | 'Failed' | 'Reversed' | 'Pending Branch';
+  status: 'Completed' | 'Pending' | 'Failed' | 'Reversed' | 'Pending Branch' | 'Pending Agent';
   timestamp: string;
 }
 
@@ -218,7 +218,7 @@ export class CustomerPortalComponent implements OnInit {
       accountNumber: 'SA-90817-2938',
       customerId: this.customer.id,
       customerName: this.customer.name,
-      productType: 'Voluntary Savings',
+      productType: 'Exchange Wallet',
       interestRate: 4.5,
       balance: 1550.00,
       status: 'Active'
@@ -480,7 +480,7 @@ export class CustomerPortalComponent implements OnInit {
     printWindow.document.write(`
       <html>
         <head>
-          <title>CCF Bank Statement - ${ref}</title>
+          <title>CCF Wallet Statement - ${ref}</title>
           <style>
             body { font-family: 'Helvetica Neue', Arial, sans-serif; padding: 40px; color: #333; line-height: 1.5; }
             .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0076f6; padding-bottom: 20px; margin-bottom: 30px; }
@@ -501,7 +501,7 @@ export class CustomerPortalComponent implements OnInit {
         <body>
           <div class="header">
             <div class="logo">Central Capital Finance</div>
-            <div class="title">ACCOUNT STATEMENT</div>
+            <div class="title">WALLET STATEMENT</div>
           </div>
           <div class="info-grid">
             <div class="info-block">
@@ -511,9 +511,9 @@ export class CustomerPortalComponent implements OnInit {
               <p><strong>Nationality:</strong> ${personal.nationality}</p>
             </div>
             <div class="info-block" style="text-align: right;">
-              <h3>Account Details</h3>
-              <p><strong>Account Reference:</strong> ${ref}</p>
-              <p><strong>Savings Account:</strong> SA-90817-2938</p>
+              <h3>Wallet Details</h3>
+              <p><strong>Profile Reference:</strong> ${ref}</p>
+              <p><strong>Exchange Wallet:</strong> SA-90817-2938</p>
               <p><strong>Active Wallet Status:</strong> Active</p>
               <p><strong>Date Generated:</strong> ${new Date().toLocaleDateString()}</p>
             </div>
@@ -537,13 +537,13 @@ export class CustomerPortalComponent implements OnInit {
               </tr>
               <tr>
                 <td>Today</td>
-                <td>Digital Account Activation Levy</td>
+                <td>Digital Wallet Activation Fee</td>
                 <td style="color: #2e7d32;">Completed</td>
                 <td class="text-right text-red">-$5.00 USD</td>
               </tr>
               <tr>
                 <td>Today</td>
-                <td>Visa Debit Card Production Fee</td>
+                <td>Wallet Setup Fee</td>
                 <td style="color: #2e7d32;">Completed</td>
                 <td class="text-right text-red">-$10.00 USD</td>
               </tr>
@@ -680,15 +680,15 @@ export class CustomerPortalComponent implements OnInit {
         amountLocal: this.exResult!.net,
         rate: this.exResult!.rate,
         fee: this.exResult!.fee,
-        payoutMethod: this.exPaymentMethod === 'online' ? 'Online (Savings)' : 'Cash (Branch)',
-        status: this.exPaymentMethod === 'online' ? 'Completed' : 'Pending Branch',
+        payoutMethod: this.exPaymentMethod === 'online' ? 'Online (Wallet)' : 'Cash (Agent)',
+        status: this.exPaymentMethod === 'online' ? 'Completed' : 'Pending Agent',
         timestamp: new Date().toLocaleString()
       });
 
       if (this.exPaymentMethod === 'online') {
-        this.displayToast('Exchange completed online! Savings balance updated.', 'success');
+        this.displayToast('Exchange completed online! Wallet balance updated.', 'success');
       } else {
-        this.displayToast('Exchange booked! Please visit any CCF branch to complete payment.', 'info');
+        this.displayToast('Exchange booked! Please visit any CCF agent location to complete payment.', 'info');
       }
     }, 1000);
   }
@@ -727,11 +727,11 @@ export class CustomerPortalComponent implements OnInit {
         amountLocal: this.transferAmount,
         rate: 1,
         fee: 0,
-        payoutMethod: 'Cash (Branch)',
-        status: 'Pending Branch',
+        payoutMethod: 'Cash (Agent)',
+        status: 'Pending Agent',
         timestamp: new Date().toLocaleString()
       });
-      this.displayToast('Transfer booked. Please visit a CCF branch to hand over cash.', 'info');
+      this.displayToast('Transfer booked. Please visit a CCF agent to hand over cash.', 'info');
     }, 1000);
   }
 
@@ -760,11 +760,11 @@ export class CustomerPortalComponent implements OnInit {
       amountLocal: transfer.amount,
       rate: 1,
       fee: 0,
-      payoutMethod: 'Cash (Branch)',
-      status: 'Pending Branch',
+      payoutMethod: 'Cash (Agent)',
+      status: 'Pending Agent',
       timestamp: new Date().toLocaleString()
     });
-    this.displayToast(`Cash collection booked! Visit a branch with Voucher ID to collect cash.`, 'success');
+    this.displayToast(`Cash collection booked! Visit a CCF agent with Voucher ID to collect cash.`, 'success');
   }
 
   declineIncoming(transfer: any): void {
@@ -781,7 +781,7 @@ export class CustomerPortalComponent implements OnInit {
   }
 
   downloadReceipt(type: string, refId: string, amount: number, currency: string, detail: string): void {
-    const text = `CENTRAL CAPITAL FINANCE\nBOOKING RECEIPT\nType: ${type}\nReference ID: ${refId}\nAmount: ${amount} ${currency}\nDetails: ${detail}\nStatus: PENDING BRANCH\nDate: ${new Date().toLocaleString()}\n\nPresent this code to the branch teller.`;
+    const text = `CENTRAL CAPITAL FINANCE\nBOOKING RECEIPT\nType: ${type}\nReference ID: ${refId}\nAmount: ${amount} ${currency}\nDetails: ${detail}\nStatus: PENDING AGENT\nDate: ${new Date().toLocaleString()}\n\nPresent this code to the payout agent.`;
     const blob = new Blob([text], { type: 'text/plain' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');

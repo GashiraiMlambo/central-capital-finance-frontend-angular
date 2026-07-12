@@ -964,7 +964,7 @@ export class OnboardingStepperComponent implements OnInit {
     printWindow.document.write(`
       <html>
         <head>
-          <title>CCF Bank Statement - ${ref}</title>
+          <title>CCF Wallet Statement - ${ref}</title>
           <style>
             body { font-family: 'Helvetica Neue', Arial, sans-serif; padding: 40px; color: #333; line-height: 1.5; }
             .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0076f6; padding-bottom: 20px; margin-bottom: 30px; }
@@ -985,7 +985,7 @@ export class OnboardingStepperComponent implements OnInit {
         <body>
           <div class="header">
             <div class="logo">Central Capital Finance</div>
-            <div class="title">ACCOUNT STATEMENT</div>
+            <div class="title">WALLET STATEMENT</div>
           </div>
           <div class="info-grid">
             <div class="info-block">
@@ -995,10 +995,10 @@ export class OnboardingStepperComponent implements OnInit {
               <p><strong>Country:</strong> \${personal.country}</p>
             </div>
             <div class="info-block" style="text-align: right;">
-              <h3>Account Details</h3>
-              <p><strong>Account Reference:</strong> \${ref}</p>
+              <h3>Wallet Details</h3>
+              <p><strong>Profile Reference:</strong> \${ref}</p>
               <p><strong>Currency:</strong> \${account.currency}</p>
-              <p><strong>Account Type:</strong> \${account.accountType}</p>
+              <p><strong>Wallet Type:</strong> \${account.accountType}</p>
               <p><strong>Date Generated:</strong> \${new Date().toLocaleDateString()}</p>
             </div>
           </div>
@@ -1021,13 +1021,13 @@ export class OnboardingStepperComponent implements OnInit {
               </tr>
               <tr>
                 <td>\${new Date().toLocaleDateString()}</td>
-                <td>Digital Account Activation Levy</td>
+                <td>Digital Wallet Activation Fee</td>
                 <td style="color: #2e7d32;">Completed</td>
                 <td class="text-right text-red">-$5.00</td>
               </tr>
               <tr>
                 <td>\${new Date().toLocaleDateString()}</td>
-                <td>Visa Debit Card Production Fee</td>
+                <td>Wallet Setup Fee</td>
                 <td style="color: #2e7d32;">Completed</td>
                 <td class="text-right text-red">-$10.00</td>
               </tr>
