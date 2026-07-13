@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { Router, RouterModule } from '@angular/router';
 import { FilterByTypePipe } from '../../pipes/filter-by-type.pipe';
 import { FilterByStatusPipe } from '../../pipes/filter-by-status.pipe';
+import { countries } from '../../services/countries';
 export interface Customer {
   id: string;
   name: string;
@@ -74,6 +75,7 @@ export class CustomerPortalComponent implements OnInit {
   loginError = '';
   
   otpInput = '';
+  isHiddenOtpFocused = false;
   otpError = '';
   isOtpSent = false;
   otpPhoneTarget = '';
@@ -86,6 +88,14 @@ export class CustomerPortalComponent implements OnInit {
   savingsAccount!: SavingsAccount;
   activeLoan!: Loan;
   walletBalance = 250.00; // Cash/Wallet balance
+  walletDeposits = 1450.00;
+  walletWithdrawals = 1200.00;
+  walletRecentActivity = [
+    { type: 'Deposit', amount: 500.00, date: '2026-07-11', status: 'Completed' },
+    { type: 'Withdrawal', amount: 200.00, date: '2026-07-08', status: 'Completed' },
+    { type: 'Deposit', amount: 950.00, date: '2026-07-01', status: 'Completed' },
+    { type: 'Withdrawal', amount: 1000.00, date: '2026-06-25', status: 'Completed' }
+  ];
   
   // Dashboard view routing (sidebar nav)
   activeView: 'home' | 'transactions' | 'exchange' | 'transfer' | 'receive' | 'rates' = 'home';
@@ -105,6 +115,130 @@ export class CustomerPortalComponent implements OnInit {
     { text: 'Your KYC documents are under review.', time: '10 mins ago' },
     { text: 'Welcome to Central Capital Finance!', time: '1 hour ago' }
   ];
+
+  // Summary Metrics
+  totalMoneySent = 14850.00;
+  activeTransfersCount = 3;
+  completedTransfersCount = 18;
+  pendingTransfersCount = 1;
+
+  // Active Transfers
+  activeTransfers = [
+    {
+      refNumber: 'REF-90283-ZW',
+      recipient: 'Sarah Chimboza',
+      destinationCountry: 'ZIMBABWE',
+      amountSent: 250.00,
+      recipientReceives: 6375.00,
+      currency: 'ZWG',
+      status: 'Under Compliance Review',
+      deliveryTime: '2 hours',
+      timelineStep: 3,
+      timestamp: '2026-07-13 09:15'
+    },
+    {
+      refNumber: 'REF-77182-ZA',
+      recipient: 'Albert Ndlovu',
+      destinationCountry: 'SOUTH AFRICA',
+      amountSent: 150.00,
+      recipientReceives: 2700.00,
+      currency: 'ZAR',
+      status: 'Awaiting Payment',
+      deliveryTime: '1 hour',
+      timelineStep: 2,
+      timestamp: '2026-07-13 10:30'
+    },
+    {
+      refNumber: 'REF-55281-MW',
+      recipient: 'Tendai Moyo',
+      destinationCountry: 'MALAWI',
+      amountSent: 500.00,
+      recipientReceives: 850000.00,
+      currency: 'MWK',
+      status: 'Ready for Collection',
+      deliveryTime: 'Instant',
+      timelineStep: 6,
+      timestamp: '2026-07-12 14:00'
+    }
+  ];
+  selectedActiveTransfer = this.activeTransfers[0];
+
+  // Favourite Recipients
+  favouriteRecipients = [
+    {
+      name: 'Sarah Chimboza',
+      country: 'Zimbabwe',
+      currency: 'ZWG',
+      preferredDeliveryMethod: 'EcoCash',
+      lastTransferDate: '2026-07-09',
+      avatar: 'SC'
+    },
+    {
+      name: 'Albert Ndlovu',
+      country: 'South Africa',
+      currency: 'ZAR',
+      preferredDeliveryMethod: 'Cash Pick-up',
+      lastTransferDate: '2026-07-05',
+      avatar: 'AN'
+    },
+    {
+      name: 'Tendai Moyo',
+      country: 'Malawi',
+      currency: 'MWK',
+      preferredDeliveryMethod: 'Bank Transfer',
+      lastTransferDate: '2026-06-20',
+      avatar: 'TM'
+    }
+  ];
+
+  // Dashboard Categorized Notifications
+  dashboardNotifications = [
+    { id: 1, type: 'success', category: 'Transfer Approved', message: 'Your transfer to Sarah Chimboza (REF-90283-ZW) has been approved and cleared compliance.', time: 'Just now', read: false },
+    { id: 2, type: 'info', category: 'Funds Ready', message: 'Voucher REF-55281-MW is ready for collection at any agent location in Blantyre, Malawi.', time: '1 hour ago', read: false },
+    { id: 3, type: 'warning', category: 'KYC Required', message: 'Please upload a proof of income document to unlock transfers exceeding $5,000 daily.', time: '3 hours ago', read: false },
+    { id: 4, type: 'success', category: 'Transfer Completed', message: 'Transfer REF-22918-ZA to Albert Ndlovu has been successfully collected.', time: 'Yesterday', read: true },
+    { id: 5, type: 'info', category: 'Rate Alert', message: 'USD → ZiG has increased by 1.2% in the last 24 hours. Exchange rate is now 25.80.', time: 'Yesterday', read: true },
+    { id: 6, type: 'info', category: 'Promotion', message: 'Zero fees on your next transfer to Malawi using mobile money payout!', time: '2 days ago', read: true }
+  ];
+
+  // Exchange Rates Popular Pairs
+  popularExchangeRates = [
+    { from: 'USD', to: 'ZiG', buyRate: 25.00, sellRate: 25.80, lastUpdated: 'Just now', trend: 'up' },
+    { from: 'USD', to: 'ZAR', buyRate: 17.85, sellRate: 18.25, lastUpdated: '1 min ago', trend: 'down' },
+    { from: 'GBP', to: 'ZiG', buyRate: 31.25, sellRate: 32.10, lastUpdated: 'Just now', trend: 'up' },
+    { from: 'EUR', to: 'USD', buyRate: 1.08, sellRate: 1.10, lastUpdated: '3 mins ago', trend: 'stable' },
+    { from: 'ZAR', to: 'MWK', buyRate: 94.50, sellRate: 97.20, lastUpdated: '5 mins ago', trend: 'up' }
+  ];
+
+  // Recent Transactions filters
+  searchQuery = '';
+  selectedDateFilter = 'All';
+  customStartDate = '';
+  customEndDate = '';
+
+  // Fee Calculator
+  feeCalcSendingCountry = 'UNITED STATES';
+  feeCalcReceivingCountry = 'ZIMBABWE';
+  feeCalcCurrency = 'ZWG';
+  feeCalcAmount = 1000;
+  feeCalcRate = 25.40;
+  feeCalcFee = 15.00;
+  feeCalcTaxes = 2.50;
+  feeCalcPayout = 25375.00;
+  feeCalcDelivery = 'Instant to Mobile Wallet';
+  feeCalcCountriesList = ['UNITED STATES', 'UNITED KINGDOM', 'SOUTH AFRICA', 'ZIMBABWE', 'MALAWI', 'CANADA', 'GERMANY'];
+  feeCalcCurrenciesList = ['ZWG', 'USD', 'ZAR', 'MWK', 'EUR'];
+
+  // Security Status
+  securityStatus = {
+    kycStatus: 'Verified',
+    twoFactor: 'Enabled',
+    lastLogin: 'Today, 10:45 AM (IP: 197.221.34.8)',
+    trustedDevices: 2
+  };
+
+  // Dashboard Charts View
+  chartView: 'monthly' | 'quarterly' | 'yearly' = 'monthly';
 
   // Payout Calculator
   calcSendAmount = 100;
@@ -175,6 +309,7 @@ export class CustomerPortalComponent implements OnInit {
     this.loadRegisteredCustomer();
     this.initializeMockData();
     this.runCalculator();
+    this.runFeeCalculator();
   }
 
   // --- Auth Controls ---
@@ -194,11 +329,11 @@ export class CustomerPortalComponent implements OnInit {
   fallbackCustomer(): void {
     this.customer = {
       id: 'CCF-2026-8893',
-      name: 'Noah Chimboza',
+      name: 'Sakhe Ndlovu',
       nationality: 'Zimbabwean',
       nationalId: '63-1234567A89',
       phone: '+263 77 123 4567',
-      email: 'noah.chimboza@gmail.com',
+      email: 'sakhe.ndlovu@gmail.com',
       address: '123 Samora Machel Ave, Harare',
       dob: '1990-05-15',
       occupation: 'Software Engineer',
@@ -250,7 +385,7 @@ export class CustomerPortalComponent implements OnInit {
         fee: 0.25,
         payoutMethod: 'EcoCash',
         status: 'Completed',
-        timestamp: new Date().toLocaleString()
+        timestamp: new Date().toISOString()
       },
       {
         id: 'TXN-88392-ZWG',
@@ -267,7 +402,7 @@ export class CustomerPortalComponent implements OnInit {
         recipientName: 'Sarah Chimboza',
         payoutPin: 'REM-8893-XWZ',
         status: 'Completed',
-        timestamp: new Date(Date.now() - 3600000).toLocaleString()
+        timestamp: new Date(Date.now() - 3600000 * 2).toISOString()
       },
       {
         id: 'TXN-77391-ZWG',
@@ -282,7 +417,7 @@ export class CustomerPortalComponent implements OnInit {
         fee: 0.50,
         payoutMethod: 'Bank Transfer',
         status: 'Completed',
-        timestamp: new Date(Date.now() - 7200000).toLocaleString()
+        timestamp: new Date(Date.now() - 3600000 * 24 * 3).toISOString()
       },
       {
         id: 'TXN-66381-ZWG',
@@ -297,7 +432,7 @@ export class CustomerPortalComponent implements OnInit {
         fee: 0.20,
         payoutMethod: 'ZIPIT',
         status: 'Completed',
-        timestamp: new Date(Date.now() - 86400000).toLocaleString()
+        timestamp: new Date(Date.now() - 3600000 * 24 * 15).toISOString()
       },
       {
         id: 'TXN-55481-ZWG',
@@ -314,7 +449,7 @@ export class CustomerPortalComponent implements OnInit {
         recipientName: 'Albert Ndlovu',
         payoutPin: 'REM-1102-ABC',
         status: 'Pending',
-        timestamp: new Date(Date.now() - 172800000).toLocaleString()
+        timestamp: new Date(Date.now() - 3600000 * 24 * 45).toISOString()
       },
       {
         id: 'TXN-44381-ZWG',
@@ -329,12 +464,11 @@ export class CustomerPortalComponent implements OnInit {
         fee: 4.00,
         payoutMethod: 'Mobile Wallet',
         status: 'Completed',
-        timestamp: new Date(Date.now() - 259200000).toLocaleString()
+        timestamp: new Date(Date.now() - 3600000 * 24 * 120).toISOString()
       }
     ];
   }
 
-  // --- Auth Handlers ---
   handleLoginSubmit(): void {
     this.loginError = '';
     const surname = this.loginSurname.trim().toLowerCase();
@@ -345,30 +479,67 @@ export class CustomerPortalComponent implements OnInit {
       return;
     }
 
-    const savedPassword = localStorage.getItem('ccf_registered_password') || 'Password123!';
+    if (surname === 'ndlovu' || surname === 'sakhe' || surname.includes('ndlovu')) {
+      this.customer.name = 'Sakhe Ndlovu';
+    }
+
     const customerNameLower = this.customer.name.toLowerCase();
 
-    // Check surname and password match
-    const isSurnameMatch = customerNameLower.includes(surname);
-    const isPasswordMatch = (password === savedPassword) || (password === 'Password123!');
+    // Check surname match (allow if matches or is ndlovu/sakhe)
+    const isSurnameMatch = customerNameLower.includes(surname) || surname === 'ndlovu' || surname === 'sakhe' || surname.includes('ndlovu');
+    // Allow any password for testing
+    const isPasswordMatch = true;
 
     if (isSurnameMatch && isPasswordMatch) {
+      localStorage.setItem('ccf_registered_customer', JSON.stringify(this.customer));
       this.isOtpSent = true;
-      this.otpPhoneTarget = this.customer.phone;
+      this.otpPhoneTarget = this.maskPhoneNumber(this.customer.phone);
+      this.otpInput = '';
       this.portalStage = 'OTP';
     } else {
       this.loginError = 'Invalid surname or password. Please try again.';
     }
   }
 
+  maskPhoneNumber(phone: string): string {
+    if (!phone) return '';
+    const parts = phone.split(' ');
+    if (parts.length >= 4) {
+      parts[2] = '***';
+      return parts.join(' ');
+    }
+    if (phone.length > 8) {
+      return phone.substring(0, 8) + '***' + phone.substring(11);
+    }
+    return phone;
+  }
+
+  scrollToSection(elementId: string): void {
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
   handleOtpSubmit(): void {
     this.otpError = '';
-    if (this.otpInput === '123456') {
+    if (this.otpInput.length === 6) {
       this.portalStage = 'DASHBOARD';
       this.displayToast('Login successful! Welcome to CCF Customer Portal.', 'success');
     } else {
-      this.otpError = 'Incorrect OTP code. Please enter 123456.';
+      this.otpError = 'Please enter a 6-digit OTP code.';
     }
+  }
+
+  focusHiddenOtp(): void {
+    const el = document.getElementById('hidden-otp-input');
+    if (el) {
+      el.focus();
+    }
+  }
+
+  onHiddenOtpInput(event: any): void {
+    this.otpInput = this.otpInput.replace(/\D/g, '').substring(0, 6);
   }
 
   handleLogout(): void {
@@ -790,5 +961,163 @@ export class CustomerPortalComponent implements OnInit {
     a.click();
     window.URL.revokeObjectURL(url);
     this.displayToast('Receipt details saved!', 'success');
+  }
+
+  // --- New Dashboard Features Helpers ---
+  selectActiveTransfer(transfer: any): void {
+    this.selectedActiveTransfer = transfer;
+    this.displayToast(`Viewing details for transfer ${transfer.refNumber}`, 'info');
+  }
+
+  sendAgain(recipient: any): void {
+    this.transferRecipientId = recipient.name;
+    this.transferCurrency = recipient.currency === 'ZWG' ? 'ZWG' : (recipient.currency === 'ZAR' ? 'ZAR' : 'USD');
+    this.activeView = 'transfer';
+    this.displayToast(`Pre-filled transfer to ${recipient.name}`, 'success');
+  }
+
+  viewRecipientHistory(recipient: any): void {
+    this.searchQuery = recipient.name;
+    this.activeView = 'transactions';
+  }
+
+  getFilteredTransactions(): Transaction[] {
+    return this.transactions.filter(txn => {
+      // Search query filtering
+      const query = this.searchQuery.trim().toLowerCase();
+      const matchesSearch = !query || 
+        txn.id.toLowerCase().includes(query) ||
+        (txn.recipientName && txn.recipientName.toLowerCase().includes(query)) ||
+        txn.payoutMethod.toLowerCase().includes(query) ||
+        txn.status.toLowerCase().includes(query);
+
+      if (!matchesSearch) return false;
+
+      // Date filtering
+      if (this.selectedDateFilter === 'All') return true;
+
+      const txnDate = new Date(txn.timestamp);
+      const now = new Date();
+      
+      // Calculate difference in time
+      const diffTime = Math.abs(now.getTime() - txnDate.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      if (this.selectedDateFilter === 'Today') {
+        return txnDate.toDateString() === now.toDateString();
+      } else if (this.selectedDateFilter === '7Days') {
+        return diffDays <= 7;
+      } else if (this.selectedDateFilter === '30Days') {
+        return diffDays <= 30;
+      } else if (this.selectedDateFilter === '3Months') {
+        return diffDays <= 90;
+      } else if (this.selectedDateFilter === 'Custom') {
+        if (!this.customStartDate || !this.customEndDate) return true;
+        const start = new Date(this.customStartDate);
+        const end = new Date(this.customEndDate);
+        start.setHours(0,0,0,0);
+        end.setHours(23,59,59,999);
+        return txnDate >= start && txnDate <= end;
+      }
+      return true;
+    });
+  }
+
+  runFeeCalculator(): void {
+    const amount = this.feeCalcAmount || 0;
+    
+    let rate = 1.0;
+    let fee = 10.0;
+    let taxes = 0.0;
+    let delivery = '1-2 Hours';
+
+    if (this.feeCalcSendingCountry === 'UNITED STATES' || this.feeCalcSendingCountry === 'UNITED KINGDOM' || this.feeCalcSendingCountry === 'CANADA' || this.feeCalcSendingCountry === 'GERMANY') {
+      if (this.feeCalcReceivingCountry === 'ZIMBABWE') {
+        rate = this.feeCalcCurrency === 'ZWG' ? 25.50 : 1.0;
+        fee = Math.max(5, amount * 0.015);
+        taxes = amount * 0.001; 
+        delivery = 'Instant to Mobile Wallet / Cash Pick-up';
+      } else if (this.feeCalcReceivingCountry === 'SOUTH AFRICA') {
+        rate = this.feeCalcCurrency === 'ZAR' ? 18.20 : 1.0;
+        fee = Math.max(7, amount * 0.02);
+        taxes = 0;
+        delivery = 'Within 1 Hour';
+      } else if (this.feeCalcReceivingCountry === 'MALAWI') {
+        rate = this.feeCalcCurrency === 'MWK' ? 1730.00 : 1.0;
+        fee = Math.max(10, amount * 0.025);
+        taxes = amount * 0.005;
+        delivery = 'Same Day to Bank / Cash';
+      } else {
+        rate = 1.0;
+        fee = 15.0;
+        delivery = '1-2 Business Days';
+      }
+    } else if (this.feeCalcSendingCountry === 'SOUTH AFRICA') {
+      if (this.feeCalcReceivingCountry === 'ZIMBABWE') {
+        rate = this.feeCalcCurrency === 'ZWG' ? 1.40 : 0.055;
+        fee = Math.max(5, amount * 0.03);
+        delivery = 'Instant Cash Pick-up';
+      } else {
+        rate = 1.0;
+        fee = 20.0;
+        delivery = 'Same Day';
+      }
+    }
+
+    this.feeCalcRate = rate;
+    this.feeCalcFee = fee;
+    this.feeCalcTaxes = taxes;
+    this.feeCalcPayout = Math.max(0, (amount - fee - taxes) * rate);
+    this.feeCalcDelivery = delivery;
+  }
+
+  markNotifRead(notif: any): void {
+    notif.read = true;
+    this.updateUnreadCount();
+  }
+
+  markAllNotifsRead(): void {
+    this.dashboardNotifications.forEach(n => n.read = true);
+    this.updateUnreadCount();
+  }
+
+  updateUnreadCount(): void {
+    this.unreadNotificationsCount = this.dashboardNotifications.filter(n => !n.read).length;
+  }
+
+  setChartView(view: 'monthly' | 'quarterly' | 'yearly'): void {
+    this.chartView = view;
+  }
+
+  manageSecurity(): void {
+    this.displayToast('Security configuration is managed by 2FA. Changes require OTP validation.', 'info');
+  }
+
+  supportAction(channel: string): void {
+    this.displayToast(`Connecting to Customer Support via ${channel}...`, 'success');
+  }
+
+  addRecipientMock(): void {
+    const name = prompt("Enter recipient's full name:");
+    if (!name) return;
+    const country = prompt("Enter recipient's country (e.g. Zimbabwe):", "Zimbabwe");
+    if (!country) return;
+    const method = prompt("Enter delivery method (e.g. EcoCash, Cash Pick-up):", "EcoCash");
+    if (!method) return;
+
+    this.favouriteRecipients.push({
+      name,
+      country,
+      currency: country.toLowerCase().includes('south') ? 'ZAR' : (country.toLowerCase().includes('malawi') ? 'MWK' : 'ZWG'),
+      preferredDeliveryMethod: method,
+      lastTransferDate: 'Just added',
+      avatar: name.split(' ').map(n => n.charAt(0)).join('').toUpperCase()
+    });
+
+    this.displayToast(`${name} added to favourite recipients.`, 'success');
+  }
+
+  downloadReceiptAction(txn: any): void {
+    this.downloadReceipt(txn.type, txn.id, txn.amount, txn.currencyPair.split('/')[0], txn.recipientName || 'Self');
   }
 }
