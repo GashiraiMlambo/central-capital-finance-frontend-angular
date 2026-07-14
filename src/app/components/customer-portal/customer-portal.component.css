@@ -2756,7 +2756,7 @@
 /* Quick Actions Hub */
 .quick-actions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
@@ -3413,7 +3413,28 @@
   margin-bottom: 1rem;
   display: block;
 }
+.chart-wrapper {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.chart-y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 156px; /* 180px total height - 24px padding-bottom */
+  padding-bottom: 1.5rem;
+  text-align: right;
+  min-width: 42px;
+}
+.y-label {
+  font-size: 0.725rem;
+  font-weight: 600;
+  color: var(--text-color-secondary, #64748b);
+  line-height: 1;
+}
 .bar-chart-container {
+  flex: 1;
   height: 180px;
   display: flex;
   align-items: flex-end;

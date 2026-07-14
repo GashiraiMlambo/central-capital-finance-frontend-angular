@@ -373,6 +373,8 @@
             </div>
           </div>
 
+
+
           <!-- Quick Actions -->
           <section class="dashboard-section" style="margin-top: 1.5rem;">
             <div class="dashboard-section-header">
@@ -409,6 +411,99 @@
                   <span>View all historical ledger</span>
                 </div>
               </button>
+
+              <!-- PIN Reference Tracker Card -->
+              <div id="remittance-tracker" class="action-card tracker-card-action" style="cursor: default; align-items: flex-start; gap: 0.75rem;">
+                <div class="action-icon track-icon" style="margin-top: 0.25rem;">
+                  <span class="material-icons">track_changes</span>
+                </div>
+                <div class="action-details" style="flex: 1; width: 100%; min-width: 0;">
+                  <span class="action-title" style="margin-bottom: 0.35rem; display: block; font-weight: 600;">PIN Reference Tracker</span>
+                  <form (submit)="trackRemittance(); $event.preventDefault();" style="display: flex; gap: 0.4rem; width: 100%;">
+                    <input 
+                      type="text" 
+                      [(ngModel)]="trackPin" 
+                      name="trackPin" 
+                      placeholder="Enter REF PIN..." 
+                      class="form-control-inline"
+                      style="flex: 1; padding: 0.25rem 0.5rem; font-size: 0.75rem; height: 32px; border-radius: 6px; border: 1px solid var(--input-border); min-width: 0;"
+                    />
+                    <button type="submit" class="btn btn-primary" [disabled]="trackLoading" style="padding: 0 0.5rem; height: 32px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; background: #ffffff; color: #0A58CA; border: 1px solid var(--input-border); cursor: pointer;">
+                      <span class="material-icons" style="font-size: 1.1rem; color: #0A58CA;">{{ trackLoading ? 'hourglass_empty' : 'search' }}</span>
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tracker Error Message -->
+            <div class="tracker-error-msg" *ngIf="trackError" style="margin-top: 1rem; display: flex; align-items: center; gap: 0.25rem; font-size: 0.8rem; color: #ef4444; animation: fadeIn 0.3s ease;">
+              <span class="material-icons" style="font-size: 1.1rem; vertical-align: middle;">warning</span> {{ trackError }}
+            </div>
+
+            <!-- PIN Tracker Timeline (rendered below Quick Actions grid when a search is active) -->
+            <div class="card-banking glass-card tracker-card" *ngIf="trackStatus > 0" style="margin-top: 1.5rem; padding: 1.5rem; animation: fadeIn 0.4s ease;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.75rem;">
+                <h4 style="margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--text-color); display: flex; align-items: center; gap: 0.5rem;">
+                  <span class="material-icons" style="color: #0A58CA; font-size: 1.2rem;">track_changes</span>
+                  Live Status for {{ trackPin }}
+                </h4>
+                <button (click)="trackStatus = 0; trackPin = ''" style="color: var(--text-color-secondary); font-size: 0.8rem; text-decoration: none; padding: 0.25rem 0.5rem; border: 1px solid var(--card-border); border-radius: 4px; background: transparent; cursor: pointer; display: flex; align-items: center; gap: 0.25rem;">
+                  <span class="material-icons" style="font-size: 0.95rem;">close</span> Clear
+                </button>
+              </div>
+
+              <div class="tracking-timeline-container" style="margin-left: 0.5rem; padding-top: 0.5rem;">
+                <div class="timeline-step" [class.completed]="trackStatus >= 1">
+                  <div class="step-marker">1</div>
+                  <div class="step-details">
+                    <h4>Transfer Created</h4>
+                    <p>Transfer request registered in system</p>
+                  </div>
+                </div>
+                <div class="timeline-step" [class.completed]="trackStatus >= 2">
+                  <div class="step-marker">2</div>
+                  <div class="step-details">
+                    <h4>Payment Confirmed</h4>
+                    <p>Sender payment received and verified</p>
+                  </div>
+                </div>
+                <div class="timeline-step" [class.completed]="trackStatus >= 3">
+                  <div class="step-marker">3</div>
+                  <div class="step-details">
+                    <h4>Compliance Review</h4>
+                    <p>Under screening and regulatory check</p>
+                  </div>
+                </div>
+                <div class="timeline-step" [class.completed]="trackStatus >= 4">
+                  <div class="step-marker">4</div>
+                  <div class="step-details">
+                    <h4>Approved</h4>
+                    <p>Compliance cleared and transaction approved</p>
+                  </div>
+                </div>
+                <div class="timeline-step" [class.completed]="trackStatus >= 5">
+                  <div class="step-marker">5</div>
+                  <div class="step-details">
+                    <h4>Funds Released</h4>
+                    <p>Funds dispatched and routed to agent network</p>
+                  </div>
+                </div>
+                <div class="timeline-step" [class.completed]="trackStatus >= 6">
+                  <div class="step-marker">6</div>
+                  <div class="step-details">
+                    <h4>Ready for Collection</h4>
+                    <p>Ready for pick-up at destination payout partner</p>
+                  </div>
+                </div>
+                <div class="timeline-step" [class.completed]="trackStatus >= 7">
+                  <div class="step-marker">7</div>
+                  <div class="step-details">
+                    <h4>Collected</h4>
+                    <p>Receiver collected cash successfully</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -618,14 +713,15 @@
               </div>
 
 
+
             </div>
 
             <!-- RIGHT COLUMN (1.8fr) -->
             <div class="grid-column right-pane">
 
-              <!-- Recent Transactions List with search & filters -->
+              <!-- Transaction History List with search & filters -->
               <div class="dashboard-section-header">
-                <h3>Recent Transactions</h3>
+                <h3>Transaction History</h3>
               </div>
               <div class="card-banking glass-card recent-trans-panel">
                 <div class="filter-controls-row">
@@ -743,223 +839,177 @@
                 </div>
               </div>
 
-              <!-- Interactive Charts -->
-              <div class="dashboard-section-header" style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center;">
-                <h3>Remittance Statistics</h3>
-                <div class="chart-toggles">
-                  <button class="toggle-btn" [class.active]="chartView === 'monthly'" (click)="setChartView('monthly')">Monthly</button>
-                  <button class="toggle-btn" [class.active]="chartView === 'quarterly'" (click)="setChartView('quarterly')">Quarterly</button>
-                  <button class="toggle-btn" [class.active]="chartView === 'yearly'" (click)="setChartView('yearly')">Yearly</button>
-                </div>
-              </div>
-              <div class="card-banking glass-card charts-panel-card">
-                <div class="chart-block">
-                  <span class="chart-title">Money Sent Trend</span>
-                  
-                  <!-- Bar chart using SVG/HTML divs -->
-                  <div class="bar-chart-container">
-                    <div class="chart-bar-group" *ngIf="chartView === 'monthly'">
-                      <div class="bar-item" style="--bar-height: 40%">
-                        <div class="bar-fill"></div>
-                        <span class="bar-label">Jan</span>
-                        <div class="bar-tooltip">$4,000</div>
-                      </div>
-                      <div class="bar-item" style="--bar-height: 55%">
-                        <div class="bar-fill"></div>
-                        <span class="bar-label">Feb</span>
-                        <div class="bar-tooltip">$5,500</div>
-                      </div>
-                      <div class="bar-item" style="--bar-height: 75%">
-                        <div class="bar-fill"></div>
-                        <span class="bar-label">Mar</span>
-                        <div class="bar-tooltip">$7,500</div>
-                      </div>
-                      <div class="bar-item" style="--bar-height: 60%">
-                        <div class="bar-fill"></div>
-                        <span class="bar-label">Apr</span>
-                        <div class="bar-tooltip">$6,000</div>
-                      </div>
-                      <div class="bar-item" style="--bar-height: 85%">
-                        <div class="bar-fill"></div>
-                        <span class="bar-label">May</span>
-                        <div class="bar-tooltip">$8,500</div>
-                      </div>
-                      <div class="bar-item" style="--bar-height: 95%">
-                        <div class="bar-fill"></div>
-                        <span class="bar-label">Jun</span>
-                        <div class="bar-tooltip">$9,500</div>
-                      </div>
-                    </div>
-
-                    <div class="chart-bar-group" *ngIf="chartView === 'quarterly'">
-                      <div class="bar-item" style="--bar-height: 60%">
-                        <div class="bar-fill"></div>
-                        <span class="bar-label">Q1</span>
-                        <div class="bar-tooltip">$17,000</div>
-                      </div>
-                      <div class="bar-item" style="--bar-height: 80%">
-                        <div class="bar-fill"></div>
-                        <span class="bar-label">Q2</span>
-                        <div class="bar-tooltip">$24,000</div>
-                      </div>
-                      <div class="bar-item" style="--bar-height: 95%">
-                        <div class="bar-fill"></div>
-                        <span class="bar-label">Q3</span>
-                        <div class="bar-tooltip">$29,500</div>
-                      </div>
-                      <div class="bar-item" style="--bar-height: 50%">
-                        <div class="bar-fill"></div>
-                        <span class="bar-label">Q4</span>
-                        <div class="bar-tooltip">$15,000</div>
-                      </div>
-                    </div>
-
-                    <div class="chart-bar-group" *ngIf="chartView === 'yearly'">
-                      <div class="bar-item" style="--bar-height: 50%">
-                        <div class="bar-fill"></div>
-                        <span class="bar-label">2024</span>
-                        <div class="bar-tooltip">$54,000</div>
-                      </div>
-                      <div class="bar-item" style="--bar-height: 75%">
-                        <div class="bar-fill"></div>
-                        <span class="bar-label">2025</span>
-                        <div class="bar-tooltip">$89,000</div>
-                      </div>
-                      <div class="bar-item" style="--bar-height: 98%">
-                        <div class="bar-fill"></div>
-                        <span class="bar-label">2026</span>
-                        <div class="bar-tooltip">$124,500</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.06); margin: 1.5rem 0;">
-
-                <div class="chart-details-row">
-                  <div class="donut-chart-mock">
-                    <span class="chart-title">Transfers by Country</span>
-                    <div class="country-list-chart">
-                      <div class="chart-row-legend">
-                        <span class="legend-color" style="background: #22c55e;"></span>
-                        <span>Zimbabwe: 65%</span>
-                      </div>
-                      <div class="chart-row-legend">
-                        <span class="legend-color" style="background: #3b82f6;"></span>
-                        <span>South Africa: 20%</span>
-                      </div>
-                      <div class="chart-row-legend">
-                        <span class="legend-color" style="background: #a855f7;"></span>
-                        <span>Malawi: 10%</span>
-                      </div>
-                      <div class="chart-row-legend">
-                        <span class="legend-color" style="background: #94a3b8;"></span>
-                        <span>Others: 5%</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="donut-chart-mock">
-                    <span class="chart-title">Status Distribution</span>
-                    <div class="country-list-chart">
-                      <div class="chart-row-legend">
-                        <span class="legend-color" style="background: #16a34a;"></span>
-                        <span>Completed: 85%</span>
-                      </div>
-                      <div class="chart-row-legend">
-                        <span class="legend-color" style="background: #fbbf24;"></span>
-                        <span>Pending: 10%</span>
-                      </div>
-                      <div class="chart-row-legend">
-                        <span class="legend-color" style="background: #ef4444;"></span>
-                        <span>Failed/Cancelled: 5%</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Remittance Tracker (Existing Search Pin Widget) -->
-              <div id="remittance-tracker" class="dashboard-section-header" style="margin-top: 2rem;">
-                <h3>PIN Reference Tracker</h3>
-              </div>
-              <div class="card-banking glass-card tracker-card">
-                <p style="font-size: 0.85rem; color: var(--text-color-secondary); margin-bottom: 1rem;">
-                  Enter a 12-digit transaction Reference PIN code to monitor the live dispatch and clearance status of your transfer.
-                </p>
-                <form (submit)="trackRemittance(); $event.preventDefault();" class="tracker-input-row">
-                  <input 
-                    type="text" 
-                    [(ngModel)]="trackPin" 
-                    name="trackPin" 
-                    placeholder="e.g. REF-90283-ZW" 
-                    class="form-control-inline"
-                    style="flex: 1;"
-                  />
-                  <button type="submit" class="btn-track-primary" [disabled]="trackLoading" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                    <span class="material-icons" style="font-size: 1.1rem;">search</span>
-                    {{ trackLoading ? 'Searching...' : 'Track Transfer' }}
-                  </button>
-                </form>
-                <div class="tracker-error-msg" *ngIf="trackError" style="display: flex; align-items: center; gap: 0.25rem;">
-                  <span class="material-icons" style="font-size: 1.1rem; color: #f59e0b; vertical-align: middle;">warning</span> {{ trackError }}
-                </div>
-                <div class="tracking-timeline-container" *ngIf="trackStatus > 0">
-                  <div class="timeline-step" [class.completed]="trackStatus >= 1">
-                    <div class="step-marker">1</div>
-                    <div class="step-details">
-                      <h4>Transfer Created</h4>
-                      <p>Transfer request registered in system</p>
-                    </div>
-                  </div>
-                  <div class="timeline-step" [class.completed]="trackStatus >= 2">
-                    <div class="step-marker">2</div>
-                    <div class="step-details">
-                      <h4>Payment Confirmed</h4>
-                      <p>Sender payment received and verified</p>
-                    </div>
-                  </div>
-                  <div class="timeline-step" [class.completed]="trackStatus >= 3">
-                    <div class="step-marker">3</div>
-                    <div class="step-details">
-                      <h4>Compliance Review</h4>
-                      <p>Under screening and regulatory check</p>
-                    </div>
-                  </div>
-                  <div class="timeline-step" [class.completed]="trackStatus >= 4">
-                    <div class="step-marker">4</div>
-                    <div class="step-details">
-                      <h4>Approved</h4>
-                      <p>Compliance cleared and transaction approved</p>
-                    </div>
-                  </div>
-                  <div class="timeline-step" [class.completed]="trackStatus >= 5">
-                    <div class="step-marker">5</div>
-                    <div class="step-details">
-                      <h4>Funds Released</h4>
-                      <p>Funds dispatched and routed to agent network</p>
-                    </div>
-                  </div>
-                  <div class="timeline-step" [class.completed]="trackStatus >= 6">
-                    <div class="step-marker">6</div>
-                    <div class="step-details">
-                      <h4>Ready for Collection</h4>
-                      <p>Ready for pick-up at destination payout partner</p>
-                    </div>
-                  </div>
-                  <div class="timeline-step" [class.completed]="trackStatus >= 7">
-                    <div class="step-marker">7</div>
-                    <div class="step-details">
-                      <h4>Collected</h4>
-                      <p>Receiver collected cash successfully</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
             </div>
 
           </div>
+
+          <!-- Interactive Charts -->
+          <div class="dashboard-section-header" style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center;">
+            <h3>Remittance Statistics</h3>
+            <div class="chart-toggles">
+              <button class="toggle-btn" [class.active]="chartView === 'monthly'" (click)="setChartView('monthly')">Monthly</button>
+              <button class="toggle-btn" [class.active]="chartView === 'quarterly'" (click)="setChartView('quarterly')">Quarterly</button>
+              <button class="toggle-btn" [class.active]="chartView === 'yearly'" (click)="setChartView('yearly')">Yearly</button>
+            </div>
+          </div>
+          <div class="card-banking glass-card charts-panel-card">
+            <div class="chart-block">
+              <span class="chart-title">Money Sent Trend</span>
+              
+              <!-- Bar chart using SVG/HTML divs -->
+              <div class="chart-wrapper">
+                <!-- Y-Axis Column -->
+                <div class="chart-y-axis">
+                  <ng-container *ngIf="chartView === 'monthly'">
+                    <span class="y-label">$10k</span>
+                    <span class="y-label">$8k</span>
+                    <span class="y-label">$6k</span>
+                    <span class="y-label">$4k</span>
+                    <span class="y-label">$2k</span>
+                    <span class="y-label">$0</span>
+                  </ng-container>
+                  <ng-container *ngIf="chartView === 'quarterly'">
+                    <span class="y-label">$30k</span>
+                    <span class="y-label">$24k</span>
+                    <span class="y-label">$18k</span>
+                    <span class="y-label">$12k</span>
+                    <span class="y-label">$6k</span>
+                    <span class="y-label">$0</span>
+                  </ng-container>
+                  <ng-container *ngIf="chartView === 'yearly'">
+                    <span class="y-label">$125k</span>
+                    <span class="y-label">$100k</span>
+                    <span class="y-label">$75k</span>
+                    <span class="y-label">$50k</span>
+                    <span class="y-label">$25k</span>
+                    <span class="y-label">$0</span>
+                  </ng-container>
+                </div>
+
+                <!-- Bar chart using SVG/HTML divs -->
+                <div class="bar-chart-container">
+                  <div class="chart-bar-group" *ngIf="chartView === 'monthly'">
+                    <div class="bar-item" style="--bar-height: 40%">
+                      <div class="bar-fill"></div>
+                      <span class="bar-label">Jan</span>
+                      <div class="bar-tooltip">$4,000</div>
+                    </div>
+                    <div class="bar-item" style="--bar-height: 55%">
+                      <div class="bar-fill"></div>
+                      <span class="bar-label">Feb</span>
+                      <div class="bar-tooltip">$5,500</div>
+                    </div>
+                    <div class="bar-item" style="--bar-height: 75%">
+                      <div class="bar-fill"></div>
+                      <span class="bar-label">Mar</span>
+                      <div class="bar-tooltip">$7,500</div>
+                    </div>
+                    <div class="bar-item" style="--bar-height: 60%">
+                      <div class="bar-fill"></div>
+                      <span class="bar-label">Apr</span>
+                      <div class="bar-tooltip">$6,000</div>
+                    </div>
+                    <div class="bar-item" style="--bar-height: 85%">
+                      <div class="bar-fill"></div>
+                      <span class="bar-label">May</span>
+                      <div class="bar-tooltip">$8,500</div>
+                    </div>
+                    <div class="bar-item" style="--bar-height: 95%">
+                      <div class="bar-fill"></div>
+                      <span class="bar-label">Jun</span>
+                      <div class="bar-tooltip">$9,500</div>
+                    </div>
+                  </div>
+
+                  <div class="chart-bar-group" *ngIf="chartView === 'quarterly'">
+                    <div class="bar-item" style="--bar-height: 60%">
+                      <div class="bar-fill"></div>
+                      <span class="bar-label">Q1</span>
+                      <div class="bar-tooltip">$17,000</div>
+                    </div>
+                    <div class="bar-item" style="--bar-height: 80%">
+                      <div class="bar-fill"></div>
+                      <span class="bar-label">Q2</span>
+                      <div class="bar-tooltip">$24,000</div>
+                    </div>
+                    <div class="bar-item" style="--bar-height: 95%">
+                      <div class="bar-fill"></div>
+                      <span class="bar-label">Q3</span>
+                      <div class="bar-tooltip">$29,500</div>
+                    </div>
+                    <div class="bar-item" style="--bar-height: 50%">
+                      <div class="bar-fill"></div>
+                      <span class="bar-label">Q4</span>
+                      <div class="bar-tooltip">$15,000</div>
+                    </div>
+                  </div>
+
+                  <div class="chart-bar-group" *ngIf="chartView === 'yearly'">
+                    <div class="bar-item" style="--bar-height: 50%">
+                      <div class="bar-fill"></div>
+                      <span class="bar-label">2024</span>
+                      <div class="bar-tooltip">$54,000</div>
+                    </div>
+                    <div class="bar-item" style="--bar-height: 75%">
+                      <div class="bar-fill"></div>
+                      <span class="bar-label">2025</span>
+                      <div class="bar-tooltip">$89,000</div>
+                    </div>
+                    <div class="bar-item" style="--bar-height: 98%">
+                      <div class="bar-fill"></div>
+                      <span class="bar-label">2026</span>
+                      <div class="bar-tooltip">$124,500</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.06); margin: 1.5rem 0;">
+
+            <div class="chart-details-row">
+              <div class="donut-chart-mock">
+                <span class="chart-title">Transfers by Country</span>
+                <div class="country-list-chart">
+                  <div class="chart-row-legend">
+                    <span class="legend-color" style="background: #22c55e;"></span>
+                    <span>Zimbabwe: 65%</span>
+                  </div>
+                  <div class="chart-row-legend">
+                    <span class="legend-color" style="background: #3b82f6;"></span>
+                    <span>South Africa: 20%</span>
+                  </div>
+                  <div class="chart-row-legend">
+                    <span class="legend-color" style="background: #a855f7;"></span>
+                    <span>Malawi: 10%</span>
+                  </div>
+                  <div class="chart-row-legend">
+                    <span class="legend-color" style="background: #94a3b8;"></span>
+                    <span>Others: 5%</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="donut-chart-mock">
+                <span class="chart-title">Status Distribution</span>
+                <div class="country-list-chart">
+                  <div class="chart-row-legend">
+                    <span class="legend-color" style="background: #16a34a;"></span>
+                    <span>Completed: 85%</span>
+                  </div>
+                  <div class="chart-row-legend">
+                    <span class="legend-color" style="background: #fbbf24;"></span>
+                    <span>Pending: 10%</span>
+                  </div>
+                  <div class="chart-row-legend">
+                    <span class="legend-color" style="background: #ef4444;"></span>
+                    <span>Failed/Cancelled: 5%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
         <!-- END HOME VIEW -->
 
@@ -1067,9 +1117,9 @@
               <div class="ex-currency-block">
                 <label>From</label>
                 <select [(ngModel)]="exFromCurrency" (change)="exResult = null" class="form-select ex-select">
-                  <option value="USD">USD — US Dollar</option>
-                  <option value="ZAR">ZAR — South African Rand</option>
-                  <option value="ZWG">ZWG — Zimbabwe Gold</option>
+                  <option *ngFor="let c of currencies" [value]="c.code">
+                    {{ c.flag }} {{ c.code }} — {{ c.name }}
+                  </option>
                 </select>
               </div>
 
@@ -1080,9 +1130,9 @@
               <div class="ex-currency-block">
                 <label>To</label>
                 <select [(ngModel)]="exToCurrency" (change)="exResult = null" class="form-select ex-select">
-                  <option value="USD">USD — US Dollar</option>
-                  <option value="ZAR">ZAR — South African Rand</option>
-                  <option value="ZWG">ZWG — Zimbabwe Gold</option>
+                  <option *ngFor="let c of currencies" [value]="c.code">
+                    {{ c.flag }} {{ c.code }} — {{ c.name }}
+                  </option>
                 </select>
               </div>
             </div>
@@ -1223,9 +1273,9 @@
               <div class="form-group">
                 <label>Currency</label>
                 <select [(ngModel)]="transferCurrency" class="form-select">
-                  <option value="USD">USD — US Dollar</option>
-                  <option value="ZAR">ZAR — South African Rand</option>
-                  <option value="ZWG">ZWG — Zimbabwe Gold</option>
+                  <option *ngFor="let c of currencies" [value]="c.code">
+                    {{ c.flag }} {{ c.code }} — {{ c.name }}
+                  </option>
                 </select>
               </div>
             </div>

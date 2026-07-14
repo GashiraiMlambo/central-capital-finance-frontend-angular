@@ -271,9 +271,25 @@ export class CustomerPortalComponent implements OnInit {
     { pair: 'USD/CNY', buyRate: 7.20, sellRate: 7.30, spread: 0.10, lastUpdated: 'Live', status: 'Live' }
   ];
 
+  currencies = [
+    { code: 'USD', name: 'US Dollar', flag: '🇺🇸' },
+    { code: 'EUR', name: 'Euro', flag: '🇪🇺' },
+    { code: 'GBP', name: 'British Pound', flag: '🇬🇧' },
+    { code: 'ZAR', name: 'South African Rand', flag: '🇿🇦' },
+    { code: 'ZWG', name: 'Zimbabwe Gold', flag: '🇿🇼' },
+    { code: 'CAD', name: 'Canadian Dollar', flag: '🇨🇦' },
+    { code: 'AUD', name: 'Australian Dollar', flag: '🇦🇺' },
+    { code: 'BWP', name: 'Botswana Pula', flag: '🇧🇼' },
+    { code: 'MWK', name: 'Malawian Kwacha', flag: '🇲🇼' },
+    { code: 'ZMW', name: 'Zambian Kwacha', flag: '🇿🇲' },
+    { code: 'CNY', name: 'Chinese Yuan', flag: '🇨🇳' },
+    { code: 'INR', name: 'Indian Rupee', flag: '🇮🇳' },
+    { code: 'JPY', name: 'Japanese Yen', flag: '🇯🇵' }
+  ];
+
   // ── EXCHANGE MODULE ──────────────────────────────────────────────
-  exFromCurrency: 'USD' | 'ZAR' | 'ZWG' = 'USD';
-  exToCurrency:   'USD' | 'ZAR' | 'ZWG' = 'ZWG';
+  exFromCurrency: string = 'USD';
+  exToCurrency:   string = 'ZWG';
   exAmount = 100;
   exPaymentMethod: 'online' | 'cash' = 'cash';
   exIsLoading = false;
@@ -284,7 +300,7 @@ export class CustomerPortalComponent implements OnInit {
   // ── TRANSFER MODULE ──────────────────────────────────────────────
   transferRecipientId = '';
   transferAmount = 0;
-  transferCurrency: 'USD' | 'ZAR' | 'ZWG' = 'USD';
+  transferCurrency: string = 'USD';
   transferNote = '';
   transferPaymentMethod: 'online' | 'cash' = 'cash';
   transferIsLoading = false;
@@ -780,14 +796,24 @@ export class CustomerPortalComponent implements OnInit {
 
   // ── EXCHANGE MODULE ─────────────────────────────────────────────
   getExchangeRate(from: string, to: string): number {
-    // Supported pairs: USD/ZWG, ZAR/ZWG, USD/ZAR
-    if (from === 'USD' && to === 'ZWG') return 25.00;
-    if (from === 'ZWG' && to === 'USD') return 1 / 25.00;
-    if (from === 'ZAR' && to === 'ZWG') return 1.40;
-    if (from === 'ZWG' && to === 'ZAR') return 1 / 1.40;
-    if (from === 'USD' && to === 'ZAR') return 25.00 / 1.40;
-    if (from === 'ZAR' && to === 'USD') return 1.40 / 25.00;
-    return 1;
+    const rates: { [key: string]: number } = {
+      USD: 1.00,
+      EUR: 0.92,
+      GBP: 0.78,
+      ZAR: 17.857,
+      ZWG: 25.00,
+      CAD: 1.37,
+      AUD: 1.50,
+      BWP: 13.50,
+      MWK: 1730.00,
+      ZMW: 25.50,
+      CNY: 7.25,
+      INR: 83.50,
+      JPY: 160.00
+    };
+    const fromRate = rates[from] || 1.00;
+    const toRate = rates[to] || 1.00;
+    return toRate / fromRate;
   }
 
   get exComputedRate(): number { return this.getExchangeRate(this.exFromCurrency, this.exToCurrency); }
