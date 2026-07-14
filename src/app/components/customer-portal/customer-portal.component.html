@@ -43,7 +43,7 @@
       <span class="material-icons" *ngIf="toastType === 'info'" style="color: #3b82f6; font-size: 1.2rem;">info</span>
     </span>
     <span class="toast-message">{{ toastMessage }}</span>
-    <button class="toast-close" (click)="closeToast()">&times;</button>
+    <button class="toast-close" (click)="closeToast()" style="display: inline-flex; align-items: center; justify-content: center;"><span class="material-icons" style="font-size: 1.1rem; line-height: 1;">close</span></button>
   </div>
 
   <!-- AUTH SCREEN (LOGIN STAGE) -->
@@ -534,40 +534,43 @@
 
 
 
-              <!-- Wallet Summary Widget -->
+              <!-- Exchange Pre-funding Widget -->
               <div class="dashboard-section-header">
-                <h3>Wallet Summary</h3>
+                <h3>Exchange Pre-funding</h3>
               </div>
               <div class="card-banking wallet-summary-card">
                 <div class="wallet-header">
                   <div>
-                    <span class="acc-product-type">Digital Remittance Balance</span>
+                    <span class="acc-product-type">Available Pre-funded Balance</span>
                     <h2 class="wallet-balance-display">{{ savingsAccount.balance | currency:'USD' }}</h2>
                   </div>
                   <div class="wallet-actions">
-                    <button class="btn btn-secondary btn-xs" (click)="displayToast('Direct deposit is linked to your bank account.', 'info')">Deposit</button>
-                    <button class="btn btn-secondary btn-xs" (click)="displayToast('Withdrawals require 2FA authentication.', 'info')">Withdraw</button>
+                    <button class="btn btn-secondary btn-xs" (click)="displayToast('Pre-funding must be processed at an authorized branch or via bank transfer.', 'info')">Pre-fund FX</button>
+                    <button class="btn btn-secondary btn-xs" (click)="displayToast('Refunds of pre-funded accounts are subject to administrative review.', 'info')">Refund Request</button>
                   </div>
                 </div>
                 <div class="wallet-stats">
                   <div class="wallet-stat-item">
-                    <span>Deposits</span>
+                    <span>Pre-loaded</span>
                     <span class="value" style="color: #10b981;">+{{ walletDeposits | currency:'USD' }}</span>
                   </div>
                   <div class="wallet-stat-item">
-                    <span>Withdrawals</span>
+                    <span>Allocated / Refunded</span>
                     <span class="value">-{{ walletWithdrawals | currency:'USD' }}</span>
                   </div>
                 </div>
                 <div class="wallet-activity">
-                  <span class="activity-title">Recent Activity</span>
+                  <span class="activity-title">Activity & Allocations</span>
                   <div class="activity-list">
                     <div class="activity-row" *ngFor="let act of walletRecentActivity">
                       <span class="activity-type">{{ act.type }}</span>
                       <span class="activity-date">{{ act.date }}</span>
-                      <span class="activity-amount" [class.deposit]="act.type === 'Deposit'">{{ act.type === 'Deposit' ? '+' : '-' }}{{ act.amount | currency:'USD' }}</span>
+                      <span class="activity-amount" [class.deposit]="act.type === 'Pre-load'">{{ act.type === 'Pre-load' ? '+' : '-' }}{{ act.amount | currency:'USD' }}</span>
                     </div>
                   </div>
+                </div>
+                <div class="wallet-compliance-note" style="font-size: 0.75rem; color: #64748b; margin-top: 1rem; border-top: 1px dashed var(--card-border); padding-top: 0.5rem; line-height: 1.35;">
+                  <strong>Compliance Notice:</strong> This pre-funding account is maintained solely to facilitate foreign exchange and remittance bookings under our Bureau de Change license. It does not represent a deposit or savings banking product.
                 </div>
               </div>
 
@@ -889,7 +892,7 @@
                     type="text" 
                     [(ngModel)]="trackPin" 
                     name="trackPin" 
-                    placeholder="e.g. REM-8893-XWZ" 
+                    placeholder="e.g. REF-90283-ZW" 
                     class="form-control-inline"
                     style="flex: 1;"
                   />
@@ -905,28 +908,49 @@
                   <div class="timeline-step" [class.completed]="trackStatus >= 1">
                     <div class="step-marker">1</div>
                     <div class="step-details">
-                      <h4>Initiated</h4>
+                      <h4>Transfer Created</h4>
                       <p>Transfer request registered in system</p>
                     </div>
                   </div>
                   <div class="timeline-step" [class.completed]="trackStatus >= 2">
                     <div class="step-marker">2</div>
                     <div class="step-details">
-                      <h4>Cleared</h4>
-                      <p>Source compliance cleared funds</p>
+                      <h4>Payment Confirmed</h4>
+                      <p>Sender payment received and verified</p>
                     </div>
                   </div>
                   <div class="timeline-step" [class.completed]="trackStatus >= 3">
                     <div class="step-marker">3</div>
                     <div class="step-details">
-                      <h4>Dispatched</h4>
-                      <p>Funds routed to local agent network</p>
+                      <h4>Compliance Review</h4>
+                      <p>Under screening and regulatory check</p>
                     </div>
                   </div>
                   <div class="timeline-step" [class.completed]="trackStatus >= 4">
                     <div class="step-marker">4</div>
                     <div class="step-details">
-                      <h4>Paid Out</h4>
+                      <h4>Approved</h4>
+                      <p>Compliance cleared and transaction approved</p>
+                    </div>
+                  </div>
+                  <div class="timeline-step" [class.completed]="trackStatus >= 5">
+                    <div class="step-marker">5</div>
+                    <div class="step-details">
+                      <h4>Funds Released</h4>
+                      <p>Funds dispatched and routed to agent network</p>
+                    </div>
+                  </div>
+                  <div class="timeline-step" [class.completed]="trackStatus >= 6">
+                    <div class="step-marker">6</div>
+                    <div class="step-details">
+                      <h4>Ready for Collection</h4>
+                      <p>Ready for pick-up at destination payout partner</p>
+                    </div>
+                  </div>
+                  <div class="timeline-step" [class.completed]="trackStatus >= 7">
+                    <div class="step-marker">7</div>
+                    <div class="step-details">
+                      <h4>Collected</h4>
                       <p>Receiver collected cash successfully</p>
                     </div>
                   </div>
@@ -1238,17 +1262,14 @@
             </div>
           </div>
 
-          <!-- Your receive ID -->
-          <div class="receive-id-card glass-card">
-            <div class="receive-id-icon" style="display: flex; align-items: center; justify-content: center;">
-              <span class="material-icons" style="font-size: 1.8rem; color: var(--text-color-primary);">account_circle</span>
-            </div>
-            <div>
-              <span class="receive-id-label">Your Receive ID</span>
-              <strong class="receive-id-value">{{ customer.id }}</strong>
-              <span class="receive-id-hint">Share this ID so others can send money to you</span>
+          <!-- Compliance Notice Banner -->
+          <div class="regulatory-disclaimer-banner" style="background: rgba(245, 158, 11, 0.08); border: 1.5px solid rgba(245, 158, 11, 0.25); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 0.75rem;">
+            <span class="material-icons" style="color: #f59e0b; font-size: 1.4rem; margin-top: 0.1rem;">gavel</span>
+            <div style="font-size: 0.825rem; line-height: 1.45; color: var(--text-color-primary);">
+              <strong style="color: #f59e0b;">Compliance & Licensing Notice:</strong> This portal displays inbound remittance bookings routed via our foreign exchange platform. Direct customer-to-customer peer-to-peer (P2P) transfers are flagged as a future payments service capability, subject to receiving a Payment Service Provider (PSP) license and regulatory approval from the RBZ.
             </div>
           </div>
+
 
           <!-- Incoming transfers list -->
           <div class="incoming-list">

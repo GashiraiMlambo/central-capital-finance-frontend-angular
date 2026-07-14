@@ -898,12 +898,18 @@
   color: #FFF;
   cursor: pointer;
   opacity: 0.7;
-  transition: opacity 0.2s ease;
-  font-size: 1rem;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border-radius: 4px;
 }
 
 .toast-close:hover {
   opacity: 1;
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
 }
 
 /* Terms Modal Glass panel */
@@ -1579,12 +1585,20 @@
 .toast-close {
   background: none;
   border: none;
-  font-size: 1.2rem;
   cursor: pointer;
   color: #94a3b8;
   margin-left: auto;
-  padding: 0;
-  display: flex;
+  padding: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+.toast-close:hover {
+  color: #ef4444;
+  background: rgba(0, 0, 0, 0.05);
+  transform: scale(1.1);
 }
 
 /* Animations */

@@ -91,10 +91,10 @@ export class CustomerPortalComponent implements OnInit {
   walletDeposits = 1450.00;
   walletWithdrawals = 1200.00;
   walletRecentActivity = [
-    { type: 'Deposit', amount: 500.00, date: '2026-07-11', status: 'Completed' },
-    { type: 'Withdrawal', amount: 200.00, date: '2026-07-08', status: 'Completed' },
-    { type: 'Deposit', amount: 950.00, date: '2026-07-01', status: 'Completed' },
-    { type: 'Withdrawal', amount: 1000.00, date: '2026-06-25', status: 'Completed' }
+    { type: 'Pre-load', amount: 500.00, date: '2026-07-11', status: 'Completed' },
+    { type: 'Exchange Allocation', amount: 200.00, date: '2026-07-08', status: 'Completed' },
+    { type: 'Pre-load', amount: 950.00, date: '2026-07-01', status: 'Completed' },
+    { type: 'Refund', amount: 1000.00, date: '2026-06-25', status: 'Completed' }
   ];
   
   // Dashboard view routing (sidebar nav)
@@ -129,7 +129,7 @@ export class CustomerPortalComponent implements OnInit {
       recipient: 'Sarah Chimboza',
       destinationCountry: 'ZIMBABWE',
       amountSent: 250.00,
-      recipientReceives: 6375.00,
+      recipientReceives: 6250.00,
       currency: 'ZWG',
       status: 'Under Compliance Review',
       deliveryTime: '2 hours',
@@ -250,7 +250,7 @@ export class CustomerPortalComponent implements OnInit {
 
   // Remittance Tracker
   trackPin = '';
-  trackStatus = 0; // 0: Idle, 1: Initiated, 2: Cleared, 3: Dispatched, 4: Paid Out
+  trackStatus = 0; // 0: Idle, 1..7: timeline steps
   trackError = '';
   trackLoading = false;
 
@@ -452,6 +452,23 @@ export class CustomerPortalComponent implements OnInit {
         timestamp: new Date(Date.now() - 3600000 * 24 * 45).toISOString()
       },
       {
+        id: 'TRF-2026-5CW1',
+        customerId: this.customer.id,
+        customerName: this.customer.name,
+        type: 'Remittance',
+        currencyPair: 'USD/ZWG',
+        direction: 'Local',
+        amount: 350.00,
+        amountLocal: 8925.00,
+        rate: 25.50,
+        fee: 10.00,
+        payoutMethod: 'Cash (Agent)',
+        recipientName: 'Albert Ndlovu',
+        payoutPin: 'REM-9912-XYZ',
+        status: 'Pending Agent',
+        timestamp: new Date(Date.now() - 3600000 * 2).toISOString()
+      },
+      {
         id: 'TXN-44381-ZWG',
         customerId: this.customer.id,
         customerName: this.customer.name,
@@ -582,14 +599,13 @@ export class CustomerPortalComponent implements OnInit {
     }
   }
 
-  // --- Remittance Tracker ---
   trackRemittance(): void {
     this.trackError = '';
     this.trackStatus = 0;
     this.trackLoading = true;
 
     if (!this.trackPin.trim()) {
-      this.trackError = 'Please enter a 12-digit transaction PIN.';
+      this.trackError = 'Please enter a transaction reference number.';
       this.trackLoading = false;
       return;
     }
@@ -598,15 +614,12 @@ export class CustomerPortalComponent implements OnInit {
       this.trackLoading = false;
       const cleanPin = this.trackPin.trim().toUpperCase();
       
-      // Match mock pins
-      if (cleanPin === 'REM-8893-XWZ') {
-        this.trackStatus = 4; // Paid Out
-      } else if (cleanPin === 'REM-1102-ABC') {
-        this.trackStatus = 3; // Dispatched
-      } else if (cleanPin.length >= 8) {
-        this.trackStatus = 2; // Cleared
+      // Match from active transfers
+      const foundTxn = this.activeTransfers.find(t => t.refNumber.toUpperCase() === cleanPin);
+      if (foundTxn) {
+        this.trackStatus = foundTxn.timelineStep;
       } else {
-        this.trackError = 'PIN code not found. Try REM-8893-XWZ or REM-1102-ABC.';
+        this.trackError = 'Transaction reference not found. Try REF-90283-ZW.';
       }
     }, 800);
   }
@@ -778,9 +791,9 @@ export class CustomerPortalComponent implements OnInit {
   }
 
   get exComputedRate(): number { return this.getExchangeRate(this.exFromCurrency, this.exToCurrency); }
-  get exConvertedAmount(): number { return this.exAmount * this.exComputedRate; }
+  get exConvertedAmount(): number { return (this.exAmount || 0) * this.exComputedRate; }
   get exFeeAmount(): number { return Math.max(this.exConvertedAmount * 0.005, 1); }
-  get exNetAmount(): number { return this.exConvertedAmount - this.exFeeAmount; }
+  get exNetAmount(): number { return Math.max(0, this.exConvertedAmount - this.exFeeAmount); }
 
   swapExCurrencies(): void {
     const tmp = this.exFromCurrency;

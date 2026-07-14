@@ -92,13 +92,20 @@
 .toast-close {
   background: none;
   border: none;
-  font-size: 1.2rem;
   cursor: pointer;
   color: inherit;
   opacity: 0.7;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border-radius: 4px;
 }
 .toast-close:hover {
   opacity: 1;
+  background: rgba(0, 0, 0, 0.05);
+  transform: scale(1.1);
 }
 
 /* BLURRED LANDING UNDERLAY */
@@ -1946,7 +1953,6 @@
   gap: 1rem;
   padding: 1.25rem 1.5rem;
   margin-bottom: 1.5rem;
-  border-left: 4px solid #0A58CA;
 }
 
 .receive-id-icon {

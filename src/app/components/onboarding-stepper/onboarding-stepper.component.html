@@ -8,7 +8,7 @@
       <span *ngIf="toastType === 'info'">ℹ️</span>
       {{ toastMessage }}
     </span>
-    <button class="toast-close" (click)="closeToast()">&times;</button>
+    <button class="toast-close" (click)="closeToast()" style="display: inline-flex; align-items: center; justify-content: center;"><span class="material-icons" style="font-size: 1.1rem; line-height: 1;">close</span></button>
   </div>
 </div>
 
@@ -1395,6 +1395,6 @@
     <span *ngIf="toastType === 'info'">ℹ️</span>
   </span>
   <span class="toast-message">{{ toastMessage }}</span>
-  <button class="toast-close" (click)="closeToast()">&times;</button>
+  <button class="toast-close" (click)="closeToast()" style="display: inline-flex; align-items: center; justify-content: center;"><span class="material-icons" style="font-size: 1.1rem; line-height: 1;">close</span></button>
 </div>
 </div>
