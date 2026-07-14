@@ -1116,11 +1116,14 @@
             <div class="ex-currency-row">
               <div class="ex-currency-block">
                 <label>From</label>
-                <select [(ngModel)]="exFromCurrency" (change)="exResult = null" class="form-select ex-select">
-                  <option *ngFor="let c of currencies" [value]="c.code">
-                    {{ c.flag }} {{ c.code }} — {{ c.name }}
-                  </option>
-                </select>
+                <div style="position: relative; display: flex; align-items: center; width: 100%;">
+                  <img [src]="getFlagUrl(exFromCurrency)" style="position: absolute; left: 10px; width: 20px; height: 20px; object-fit: contain; pointer-events: none;" />
+                  <select [(ngModel)]="exFromCurrency" (change)="exResult = null" class="form-select ex-select" style="padding-left: 2.3rem; width: 100%;">
+                    <option *ngFor="let c of currencies" [value]="c.code">
+                      {{ c.code }} — {{ c.name }}
+                    </option>
+                  </select>
+                </div>
               </div>
 
               <button class="swap-btn" (click)="swapExCurrencies()" title="Swap currencies" style="display: inline-flex; align-items: center; justify-content: center;">
@@ -1129,11 +1132,14 @@
 
               <div class="ex-currency-block">
                 <label>To</label>
-                <select [(ngModel)]="exToCurrency" (change)="exResult = null" class="form-select ex-select">
-                  <option *ngFor="let c of currencies" [value]="c.code">
-                    {{ c.flag }} {{ c.code }} — {{ c.name }}
-                  </option>
-                </select>
+                <div style="position: relative; display: flex; align-items: center; width: 100%;">
+                  <img [src]="getFlagUrl(exToCurrency)" style="position: absolute; left: 10px; width: 20px; height: 20px; object-fit: contain; pointer-events: none;" />
+                  <select [(ngModel)]="exToCurrency" (change)="exResult = null" class="form-select ex-select" style="padding-left: 2.3rem; width: 100%;">
+                    <option *ngFor="let c of currencies" [value]="c.code">
+                      {{ c.code }} — {{ c.name }}
+                    </option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -1272,11 +1278,14 @@
               </div>
               <div class="form-group">
                 <label>Currency</label>
-                <select [(ngModel)]="transferCurrency" class="form-select">
-                  <option *ngFor="let c of currencies" [value]="c.code">
-                    {{ c.flag }} {{ c.code }} — {{ c.name }}
-                  </option>
-                </select>
+                <div style="position: relative; display: flex; align-items: center; width: 100%;">
+                  <img [src]="getFlagUrl(transferCurrency)" style="position: absolute; left: 10px; width: 20px; height: 20px; object-fit: contain; pointer-events: none;" />
+                  <select [(ngModel)]="transferCurrency" class="form-select" style="padding-left: 2.3rem; width: 100%;">
+                    <option *ngFor="let c of currencies" [value]="c.code">
+                      {{ c.code }} — {{ c.name }}
+                    </option>
+                  </select>
+                </div>
               </div>
             </div>
 

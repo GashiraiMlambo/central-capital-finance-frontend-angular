@@ -794,6 +794,26 @@ export class CustomerPortalComponent implements OnInit {
     this.showToast = false;
   }
 
+  getFlagUrl(currencyCode: string): string {
+    const currencyToCountry: { [key: string]: string } = {
+      USD: 'US',
+      EUR: 'EU',
+      GBP: 'GB',
+      ZAR: 'ZA',
+      ZWG: 'ZW',
+      CAD: 'CA',
+      AUD: 'AU',
+      BWP: 'BW',
+      MWK: 'MW',
+      ZMW: 'ZM',
+      CNY: 'CN',
+      INR: 'IN',
+      JPY: 'JP'
+    };
+    const countryCode = currencyToCountry[currencyCode] || 'US';
+    return `https://flagsapi.com/${countryCode}/flat/32.png`;
+  }
+
   // ── EXCHANGE MODULE ─────────────────────────────────────────────
   getExchangeRate(from: string, to: string): number {
     const rates: { [key: string]: number } = {
